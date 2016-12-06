@@ -68,7 +68,7 @@ public class Main2Activity extends AppCompatActivity {
                 TimerEntry.COLUMN_START_TIME,
                 TimerEntry.COLUMN_ELAPSED_TIME };
 
-        // Perform a query on the pets table
+        // Perform a query on the table
         Cursor cursor = db.query(
                 TimerEntry.TABLE_NAME,   // The table to query
                 projection,            // The columns to return

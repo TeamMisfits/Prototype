@@ -15,10 +15,17 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text = "Submit Task"
-        android:onClick = "createClass"/>
+        android:text = "Create Class"
+        android:background="@color/colorAccent"
+        android:onClick = "createClass"
+        android:layout_marginBottom="16dp"/>
+    
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+    </ListView>
 
-
-
+    
 </LinearLayout>

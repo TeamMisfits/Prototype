@@ -16,26 +16,26 @@ public final class TimerContract {
     public static final class TimerEntry implements BaseColumns{
 
         //name of the data base
-        public final static String TABLE_NAME = "tasks";
+        public static final String TABLE_NAME = "tasks";
 
         //unique ID number for each task
 
-        public final static String _ID = BaseColumns._ID;
+        public static final String _ID = BaseColumns._ID;
 
         //name of the class
 
-        public final static String COLUMN_CLASS_NAME = "className";
+        public static final String COLUMN_CLASS_NAME = "className";
 
         //name of the task
 
-        public final static String COLUMN_TASK_NAME = "taskName";
+        public static final String COLUMN_TASK_NAME = "taskName";
 
         //start time for the task
 
-        public final static String COLUMN_START_TIME = "startTime";
+        public static final String COLUMN_START_TIME = "startTime";
 
         //end time for the task
 
-        public final static String COLUMN_ELAPSED_TIME = "totalTime";
+        public static final String COLUMN_ELAPSED_TIME = "totalTime";
     }
 }

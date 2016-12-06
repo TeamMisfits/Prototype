@@ -1,10 +1,13 @@
 package com.example.android.justjava.data;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.android.justjava.data.TimerContract.TimerEntry;
+
+import java.sql.Time;
 
 /**
  * Created by Owner on 12/3/2016.
@@ -14,12 +17,9 @@ public class TaskDbHelper extends SQLiteOpenHelper {
 
     public static final String LOG_TAG = TaskDbHelper.class.getSimpleName();
 
-    //name of the database file
-    private static final String DATABASE_NAME = "schedule1.db";
-
     //Database version
-
     private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "schedule1.db";
 
     //creates instance of TaskDbHelper
 
@@ -46,6 +46,29 @@ public class TaskDbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
-        //database currently up to date. Doesnt do anythign
+        db.execSQL("DROP TABLE IF EXISTS " + TimerEntry.TABLE_NAME);
+        onCreate(db);
     }
+
+
+    /**
+     * Gets all Products in the Database and returns a cursor of them.
+     * If there are no items in the database then the cursor returns null
+     *
+     * @return A Cursor of all products or null
+     */
+    public Cursor getAllClasses() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TimerEntry.TABLE_NAME, new String[] {TimerEntry._ID, TimerEntry.COLUMN_CLASS_NAME, TimerEntry.COLUMN_TASK_NAME, TimerEntry.COLUMN_START_TIME, TimerEntry.COLUMN_ELAPSED_TIME}, null, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            return cursor;
+        }
+        else
+        {
+            return null;
+        }
+
+    }
+
 }
