@@ -26,14 +26,8 @@ public class Main2Activity extends AppCompatActivity {
 
     public static Map<String, List<String>> ClassTaskMap;
 
-    /**
-     * EditText field to enter the class's name
-     */
     private EditText mClassNameEditText;
 
-    /**
-     * EditText field to enter the task's name
-     */
     private EditText mTaskNameEditText;
 
     @Override

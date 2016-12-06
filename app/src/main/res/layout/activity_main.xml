@@ -11,53 +11,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.android.justjava.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingBottom = "8dp"
-        android:text="QUANTITY"
-        android:textSize = "12sp"/>
-
-    <!-- Name field -->
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/edit_class_name"
-        android:hint="@string/hint_class_name"
-        android:inputType="textCapWords"/>
-
-    <!-- Breed field -->
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/edit_task_name"
-        android:hint="@string/hint_task_name"
-        android:inputType="textCapWords"/>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text = "Submit Task"
-        android:onClick = "submitTask"/>
+        android:onClick = "createClass"/>
 
-    <!-- Breed field -->
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/edit_lecture_name"
-        android:hint="@string/hint_lecture_name"
-        android:inputType="textCapWords"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text = "Submit Lecture"
-        android:onClick = "submitLecture"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text = "Shift to next screen"
-        android:onClick = "switchActivity"/>
 
 </LinearLayout>

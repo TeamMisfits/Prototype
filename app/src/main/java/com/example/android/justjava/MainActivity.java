@@ -1,15 +1,3 @@
-/**
-
- * Add your package below. Package name can be found in the project's AndroidManifest.xml file.
-
- * This is the package name our example uses:
-
- *
-
- * package com.example.android.justjava; 
-
- */
-
 package com.example.android.justjava;
 
 import android.content.Intent;
@@ -30,40 +18,27 @@ import com.example.android.justjava.data.TaskDbHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
 
- * This app displays an order form to order coffee.
-
- */
 
 public class MainActivity extends AppCompatActivity {
 
     // List<String> classes = new ArrayList<String>();
 
-    /**
-     * EditText field to enter the class's name
-     */
+    //Enter the classes name
     private EditText mClassNameEditText;
 
-    /**
-     * EditText field to enter the task's name
-     */
+    //Enter Task Name
     private EditText mTaskNameEditText;
 
-    /**
-     * EditText field to enter the task's start time
-     */
    // private EditText mStartTimeEditText;
 
-    /**
-     * EditText field to enter the task's end time
-     */
    // private EditText mEndTimeEditText;
 
+    //Enter lecture name
     private EditText mLectureNameEditText;
 
+    /****************************** ON CREATE **************************************/
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -71,14 +46,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Find all relevant views that we will need to read user input from
+
+
+        /*
         mClassNameEditText = (EditText) findViewById(R.id.edit_class_name);
         mTaskNameEditText = (EditText) findViewById(R.id.edit_task_name);
         //mStartTimeEditText = (EditText) findViewById(R.id.edit_start_time);
         //mEndTimeEditText = (EditText) findViewById(R.id.edit_end_time);
         mLectureNameEditText = (EditText) findViewById(R.id.edit_lecture_name);
+        */
     }
 
-    public void submitTask(View view) {
+    public void createClass(View view) {
 
         String classNameString = mClassNameEditText.getText().toString().trim();
 
@@ -94,9 +73,10 @@ public class MainActivity extends AppCompatActivity {
         // Gets the database in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        long startTime = 0;
 
+        long startTime = 0;
         long elapsedTime = 0;
+
 
         // Create a ContentValues object where column names are the keys,
         // and pet attributes from the editor are the values.
@@ -120,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+/*
     public void submitLecture(View view) {
 
         String lectureNameString = mLectureNameEditText.getText().toString().trim();
@@ -165,5 +146,5 @@ public class MainActivity extends AppCompatActivity {
 
         startActivity(intent);
     }
-
+    */
 }
