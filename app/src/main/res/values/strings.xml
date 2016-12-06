@@ -15,4 +15,5 @@
 
     <!-- Text hint for name field in the editor [CHAR LIMIT=30] -->
     <string name="hint_lecture_name">Lecture Name</string>
+    <string name="title_activity_main4">Main4Activity</string>
 </resources>

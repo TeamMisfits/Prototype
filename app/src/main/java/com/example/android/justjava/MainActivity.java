@@ -1,169 +1,130 @@
-/**
-
- * Add your package below. Package name can be found in the project's AndroidManifest.xml file.
-
- * This is the package name our example uses:
-
- *
-
- * package com.example.android.justjava; 
-
- */
-
 package com.example.android.justjava;
 
-import android.content.Intent;
-import android.os.Bundle;
-
-import android.support.v7.app.AppCompatActivity;
-
-import android.view.View;
-
 import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View.OnClickListener;
 
-import com.example.android.justjava.data.TimerContract.TimerEntry;
+
+
 import com.example.android.justjava.data.TaskDbHelper;
+import com.example.android.justjava.data.TimerContract.TimerEntry;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-/**
-
- * This app displays an order form to order coffee.
-
- */
 
 public class MainActivity extends AppCompatActivity {
 
-    // List<String> classes = new ArrayList<String>();
+    public final static String EXTRA_MESSAGE = "com.example.androidexample";
 
-    /**
-     * EditText field to enter the class's name
-     */
-    private EditText mClassNameEditText;
+    //helper allowing access to data base
+    private TaskDbHelper mDbHelper;
 
-    /**
-     * EditText field to enter the task's name
-     */
-    private EditText mTaskNameEditText;
+    private SimpleCursorAdapter simpleCursorAdapter;
 
-    /**
-     * EditText field to enter the task's start time
-     */
-   // private EditText mStartTimeEditText;
+    ListView listView;
 
-    /**
-     * EditText field to enter the task's end time
-     */
-   // private EditText mEndTimeEditText;
 
-    private EditText mLectureNameEditText;
 
+    /******************************
+     * ON CREATE
+     **************************************/
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
+        mDbHelper = new TaskDbHelper(this);
 
+        //ClassTaskMap = new HashMap<String, List<String>>();
+
+        //mClassNameEditText = (EditText) findViewById(R.id.choose_class_name);
+        //mTaskNameEditText = (EditText) findViewById(R.id.choose_task_name);
+
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Find all relevant views that we will need to read user input from
-        mClassNameEditText = (EditText) findViewById(R.id.edit_class_name);
-        mTaskNameEditText = (EditText) findViewById(R.id.edit_task_name);
-        //mStartTimeEditText = (EditText) findViewById(R.id.edit_start_time);
-        //mEndTimeEditText = (EditText) findViewById(R.id.edit_end_time);
-        mLectureNameEditText = (EditText) findViewById(R.id.edit_lecture_name);
-    }
+        listView = (ListView) findViewById(R.id.list);
+        mDbHelper = new TaskDbHelper(this);
 
-    public void submitTask(View view) {
+        listView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener()
+                {
+                    //onClickListener used to see if the user pressed a list item
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View view,int position, long arg3) {
 
-        String classNameString = mClassNameEditText.getText().toString().trim();
+                        Intent intent = new Intent(MainActivity.this, DisplayClass.class);
 
-        String taskNameString = mTaskNameEditText.getText().toString().trim();
+                        String selectedClass = listView.getItemAtPosition(position).toString();
 
-       // String startTimeString = mStartTimeEditText.getText().toString().trim();
 
-       // String endTimeString = mEndTimeEditText.getText().toString().trim();
-
-        // Create database helper
-        TaskDbHelper mDbHelper = new TaskDbHelper(this);
-
-        // Gets the database in write mode
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        long startTime = 0;
-
-        long elapsedTime = 0;
-
-        // Create a ContentValues object where column names are the keys,
-        // and pet attributes from the editor are the values.
-        ContentValues values = new ContentValues();
-
-        values.put(TimerEntry.COLUMN_CLASS_NAME, classNameString);
-        values.put(TimerEntry.COLUMN_TASK_NAME, taskNameString);
-        values.put(TimerEntry.COLUMN_START_TIME, startTime);
-        values.put(TimerEntry.COLUMN_ELAPSED_TIME, elapsedTime);
-
-        // Insert a new row for pet in the database, returning the ID of that new row.
-        long newRowId = db.insert(TimerEntry.TABLE_NAME, null, values);
-
-        // Show a toast message depending on whether or not the insertion was successful
-        if (newRowId == -1) {
-            // If the row ID is -1, then there was an error with insertion.
-            Toast.makeText(this, "Error with saving task", Toast.LENGTH_SHORT).show();
-        } else {
-            // Otherwise, the insertion was successful and we can display a toast with the row ID.
-            Toast.makeText(this, "Task saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void submitLecture(View view) {
-
-        String lectureNameString = mLectureNameEditText.getText().toString().trim();
-
-        String taskNameString = "Lecture";
-
-        long startTime = 0;
-
-        long elapsedTime = 0;
-
-        // Create database helper
-        TaskDbHelper mDbHelper = new TaskDbHelper(this);
-
-        // Gets the database in write mode
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        // Create a ContentValues object where column names are the keys,
-        // and pet attributes from the editor are the values.
-        ContentValues values = new ContentValues();
-
-        values.put(TimerEntry.COLUMN_CLASS_NAME, lectureNameString);
-        values.put(TimerEntry.COLUMN_TASK_NAME, taskNameString);
-        values.put(TimerEntry.COLUMN_START_TIME, startTime);
-        values.put(TimerEntry.COLUMN_ELAPSED_TIME, elapsedTime);
-
-        // Insert a new row for pet in the database, returning the ID of that new row.
-        long newRowId = db.insert(TimerEntry.TABLE_NAME, null, values);
-
-        // Show a toast message depending on whether or not the insertion was successful
-        if (newRowId == -1) {
-            // If the row ID is -1, then there was an error with insertion.
-            Toast.makeText(this, "Error with saving lecture", Toast.LENGTH_SHORT).show();
-        } else {
-            // Otherwise, the insertion was successful and we can display a toast with the row ID.
-            Toast.makeText(this, "Lecture saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
-        }
+                        TextView textView = (TextView) view.findViewById(R.id.class_name);
+                        String text = textView.getText().toString();
+                        intent.putExtra(EXTRA_MESSAGE, text);
+                        startActivity(intent);
+                    }
+                }
+        );
 
     }
 
-    public void switchActivity(View view) {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        displayClasses();
+    }
 
-        Intent intent = new Intent(this, Main2Activity.class);
+    public void createClass(View view) {
+
+        Intent intent = new Intent(this, CreateClass.class);
 
         startActivity(intent);
+
     }
+
+    private void displayClasses() {
+
+            Cursor cursor = mDbHelper.getAllClasses();
+            if (cursor == null)
+            {
+                return;
+            }
+            if (cursor.getCount() == 0)
+            {
+                return;
+            }
+            String[] columns = new String[] {
+                    TimerEntry.COLUMN_CLASS_NAME,
+            };
+            int[] boundTo = new int[] {
+                    R.id.class_name,
+            };
+            simpleCursorAdapter = new android.widget.SimpleCursorAdapter(this,
+                    R.layout.layout,
+                    cursor,
+                    columns,
+                    boundTo,
+                    0);
+            listView.setAdapter(simpleCursorAdapter);
+    }
+
+
+
+
 
 }

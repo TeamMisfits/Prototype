@@ -26,14 +26,8 @@ public class Main2Activity extends AppCompatActivity {
 
     public static Map<String, List<String>> ClassTaskMap;
 
-    /**
-     * EditText field to enter the class's name
-     */
     private EditText mClassNameEditText;
 
-    /**
-     * EditText field to enter the task's name
-     */
     private EditText mTaskNameEditText;
 
     @Override
@@ -74,7 +68,7 @@ public class Main2Activity extends AppCompatActivity {
                 TimerEntry.COLUMN_START_TIME,
                 TimerEntry.COLUMN_ELAPSED_TIME };
 
-        // Perform a query on the pets table
+        // Perform a query on the table
         Cursor cursor = db.query(
                 TimerEntry.TABLE_NAME,   // The table to query
                 projection,            // The columns to return
