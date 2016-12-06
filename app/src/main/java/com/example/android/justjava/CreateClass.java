@@ -27,7 +27,7 @@ public class CreateClass extends AppCompatActivity {
 
     public void saveClass(View view) {
 
-        String lectureNameString = mClassNameEditText.getText().toString().trim();
+        String classNameString = mClassNameEditText.getText().toString().trim();
 
         String taskNameString = null;
 
@@ -45,7 +45,7 @@ public class CreateClass extends AppCompatActivity {
         // and pet attributes from the editor are the values.
         ContentValues values = new ContentValues();
 
-        values.put(TimerContract.TimerEntry.COLUMN_CLASS_NAME, lectureNameString);
+        values.put(TimerContract.TimerEntry.COLUMN_CLASS_NAME, classNameString);
         values.put(TimerContract.TimerEntry.COLUMN_TASK_NAME, taskNameString);
         values.put(TimerContract.TimerEntry.COLUMN_START_TIME, startTime);
         values.put(TimerContract.TimerEntry.COLUMN_ELAPSED_TIME, elapsedTime);
@@ -59,7 +59,7 @@ public class CreateClass extends AppCompatActivity {
             Toast.makeText(this, "Error with saving", Toast.LENGTH_SHORT).show();
         } else {
             // Otherwise, the insertion was successful and we can display a toast with the row ID.
-            Toast.makeText(this, "Saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Created Class: " + classNameString, Toast.LENGTH_SHORT).show();
         }
 
 

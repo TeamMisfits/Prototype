@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(
                 new AdapterView.OnItemClickListener()
                 {
+                    //onClickListener used to see if the user pressed a list item
                     @Override
                     public void onItemClick(AdapterView<?> arg0, View view,int position, long arg3) {
 
@@ -93,11 +94,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CreateClass.class);
 
         startActivity(intent);
-
-    }
-
-    public void selectClass() {
-
 
     }
 

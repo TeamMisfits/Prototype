@@ -9,10 +9,6 @@ import com.example.android.justjava.data.TimerContract.TimerEntry;
 
 import java.sql.Time;
 
-/**
- * Created by Owner on 12/3/2016.
- */
-
 public class TaskDbHelper extends SQLiteOpenHelper {
 
     public static final String LOG_TAG = TaskDbHelper.class.getSimpleName();
@@ -69,6 +65,27 @@ public class TaskDbHelper extends SQLiteOpenHelper {
             return null;
         }
 
+    }
+
+    /**
+     * This function delete's a product in TABLE_PRODUCTS based on the ID of the product retrieved
+     * by it's product name.
+     * @param classname The name of the product to delete
+     * @return True if deleted false otherwise.
+     */
+    public void deleteClass(String classname) {
+        String q = "SELECT * FROM " + TimerEntry.TABLE_NAME + " WHERE " + TimerEntry.COLUMN_CLASS_NAME
+                + " = \"" + classname + "\"";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(q, null);
+        if (cursor.moveToFirst()) {
+            cursor.moveToFirst();
+            db.delete(TimerEntry.TABLE_NAME, TimerEntry._ID + " = ?",
+                    new String[] { String.valueOf(Integer.parseInt(cursor.getString(0)))});
+
+            cursor.close();
+        }
+        db.close();
     }
 
 }
