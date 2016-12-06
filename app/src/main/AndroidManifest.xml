@@ -18,6 +18,7 @@
         <activity android:name=".Main2Activity" />
         <activity android:name=".Main3Activity" />
         <activity android:name=".CreateClass" />
+        <activity android:name=".DisplayClass"></activity>
     </application>
 
 </manifest>

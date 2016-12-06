@@ -7,15 +7,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View.OnClickListener;
 
 
 
 import com.example.android.justjava.data.TaskDbHelper;
 import com.example.android.justjava.data.TimerContract.TimerEntry;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,19 +31,14 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
+    public final static String EXTRA_MESSAGE = "com.example.androidexample";
+
     //helper allowing access to data base
     private TaskDbHelper mDbHelper;
 
     private SimpleCursorAdapter simpleCursorAdapter;
 
     ListView listView;
-
-    //public static Map<String, List<String>> ClassTaskMap;
-
-
-
-
-
 
 
 
@@ -60,6 +60,26 @@ public class MainActivity extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.list);
         mDbHelper = new TaskDbHelper(this);
+
+        listView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener()
+                {
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View view,int position, long arg3) {
+
+                        Intent intent = new Intent(MainActivity.this, DisplayClass.class);
+
+                        String selectedClass = listView.getItemAtPosition(position).toString();
+
+
+                        TextView textView = (TextView) view.findViewById(R.id.class_name);
+                        String text = textView.getText().toString();
+                        intent.putExtra(EXTRA_MESSAGE, text);
+                        startActivity(intent);
+                    }
+                }
+        );
+
     }
 
     @Override
@@ -76,60 +96,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    //displays information on the screen
-    private void getDatabaseInfo() {
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
-        String[] projection = {
-                TimerEntry._ID,
-                TimerEntry.COLUMN_CLASS_NAME,
-                TimerEntry.COLUMN_TASK_NAME,
-                TimerEntry.COLUMN_START_TIME,
-                TimerEntry.COLUMN_ELAPSED_TIME};
-
-        // Perform a query on the table
-        Cursor cursor = db.query(
-                TimerEntry.TABLE_NAME,   // The table to query
-                projection,            // The columns to return
-                null,                  // The columns for the WHERE clause
-                null,                  // The values for the WHERE clause
-                null,                  // Don't group the rows
-                null,                  // Don't filter by row groups
-                null);                   // The sort order
-
-
-        /*
-        //figures out the index for the column
-        int classnameColumnIndex = cursor.getColumnIndex(TimerEntry.COLUMN_CLASS_NAME);
-        int tasknameColumnIndex = cursor.getColumnIndex(TimerEntry.COLUMN_TASK_NAME);
-
-        // Iterate through all the returned rows in the cursor
-        while (cursor.moveToNext()) {
-            // Use that index to extract the String or Int value of the word
-            // at the current row the cursor is on.
-            String currentClassName = cursor.getString(classnameColumnIndex);
-            String currentTaskName = cursor.getString(tasknameColumnIndex);
-
-            if (ClassTaskMap.containsKey(currentClassName))
-            {
-                ClassTaskMap.get(currentClassName).add(currentTaskName);
-            }
-            else
-            {
-                ClassTaskMap.put(currentClassName, new ArrayList<String>());
-            }
-        }
-         */
-
-
-    }
-
     public void selectClass() {
-        //TODO 1
+
+
     }
 
     private void displayClasses() {
@@ -157,6 +126,9 @@ public class MainActivity extends AppCompatActivity {
                     0);
             listView.setAdapter(simpleCursorAdapter);
     }
+
+
+
 
 
 }
