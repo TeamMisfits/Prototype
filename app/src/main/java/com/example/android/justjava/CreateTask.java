@@ -1,6 +1,7 @@
 package com.example.android.justjava;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,11 +12,11 @@ import android.widget.Toast;
 import com.example.android.justjava.data.TaskDbHelper;
 import com.example.android.justjava.data.TimerContract;
 
-public class CreateClass extends AppCompatActivity {
+public class CreateTask extends AppCompatActivity {
 
     //defines the edit text view
-    private EditText mClassNameEditText;
-    //defines the database helper
+    private EditText mTaskNameEditText;
+    //database helper
     TaskDbHelper mDbHelper;
 
     //Elements to be stored
@@ -27,20 +28,24 @@ public class CreateClass extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_class);
+        setContentView(R.layout.activity_create_task);
 
-        //identifies the edit text view
-        mClassNameEditText = (EditText) findViewById(R.id.getClassName);
+        //Receives intent from MainActivity and sets the classname equal to the received EXTRA_MESSAGE
+        Intent intent = getIntent();
+
+        classNameString = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+
+        mTaskNameEditText = (EditText) findViewById(R.id.getTaskName);
 
         // Create database helper
         mDbHelper = new TaskDbHelper(this);
     }
 
-    public void saveClass(View view) {
+    public void saveTask(View view) {
 
         //Initialize the info to be placed in the new class
-        classNameString = mClassNameEditText.getText().toString().trim();
-        taskNameString = null;  //taskNameString as null means it is a class
+        //classNameString already properly defined
+        taskNameString = mTaskNameEditText.getText().toString().trim();;
         startTime = 0;
         elapsedTime = 0;
 
@@ -66,7 +71,7 @@ public class CreateClass extends AppCompatActivity {
             Toast.makeText(this, "Error with saving", Toast.LENGTH_SHORT).show();
         } else {
             // Otherwise, the insertion was successful and we can display a toast with the row ID.
-            Toast.makeText(this, "Created Class: " + classNameString, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Created Task: " + taskNameString + " in " + classNameString, Toast.LENGTH_SHORT).show();
         }
         finish();
     }

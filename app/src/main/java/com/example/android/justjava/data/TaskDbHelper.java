@@ -53,7 +53,7 @@ public class TaskDbHelper extends SQLiteOpenHelper {
      *
      * @return A Cursor of all products or null
      */
-    public Cursor getAllClasses() {
+    public Cursor getAllItems() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TimerEntry.TABLE_NAME, new String[] {TimerEntry._ID, TimerEntry.COLUMN_CLASS_NAME, TimerEntry.COLUMN_TASK_NAME, TimerEntry.COLUMN_START_TIME, TimerEntry.COLUMN_ELAPSED_TIME}, null, null, null, null, null);
         if (cursor != null) {

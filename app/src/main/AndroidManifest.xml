@@ -8,7 +8,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:label="MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,8 +19,16 @@
         </activity>
         <activity android:name=".Main2Activity" />
         <activity android:name=".Main3Activity" />
-        <activity android:name=".CreateClass" />
-        <activity android:name=".DisplayClass"></activity>
+        <activity
+            android:name=".CreateClass"
+            android:label="Create Class" />
+        <activity
+            android:name=".DisplayClass"
+            android:label="Display Class" />
+        <activity
+            android:name=".CreateTask"
+            android:label="Create Task " />
+        <activity android:name=".DisplayTask"></activity>
     </application>
 
 </manifest>
