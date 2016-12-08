@@ -88,7 +88,6 @@ public class DisplayClass extends AppCompatActivity {
     public void deleteClass(View view){
 
         //Calls deleteClass function from TaskDBHelper
-        // mDbHelper.deleteClass(classname);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String whereClause = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ?";
@@ -117,7 +116,6 @@ public class DisplayClass extends AppCompatActivity {
     private void displayTasks() {
 
         //class getAllClasses from TaskDBHelper
-        //Cursor cursor = mDbHelper.getAllItems();
        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String[] projection = {
