@@ -18,6 +18,7 @@ import android.view.View.OnClickListener;
 
 
 import com.example.android.justjava.data.TaskDbHelper;
+import com.example.android.justjava.data.TimerContract;
 import com.example.android.justjava.data.TimerContract.TimerEntry;
 
 import org.w3c.dom.Text;
@@ -93,7 +94,31 @@ public class MainActivity extends AppCompatActivity {
     private void displayClasses() {
 
             //class getAllClasses from TaskDBHelper
-            Cursor cursor = mDbHelper.getAllItems();
+            //Cursor cursor = mDbHelper.getAllItems();
+
+            SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+            String[] projection = {
+                    TimerContract.TimerEntry._ID,
+                    TimerContract.TimerEntry.COLUMN_CLASS_NAME,
+                    TimerContract.TimerEntry.COLUMN_TASK_NAME,
+                    TimerContract.TimerEntry.COLUMN_START_TIME,
+                    TimerContract.TimerEntry.COLUMN_ELAPSED_TIME};
+
+
+        String selection = TimerContract.TimerEntry.COLUMN_TASK_NAME + " = ?";
+
+            String[] selectionArgs = {"Lecture"};
+            // Perform a query on the pets table
+
+            Cursor cursor = db.query(
+                    TimerContract.TimerEntry.TABLE_NAME,   // The table to query
+                    projection,            // The columns to return
+                    selection,                  // The columns for the WHERE clause////
+                    selectionArgs,                  // The values for the WHERE clause
+                    null,                  // Don't group the rows
+                    null,                  // Don't filter by row groups
+                    null);                   // The sort order
 
             //Error checking
             if (cursor == null)

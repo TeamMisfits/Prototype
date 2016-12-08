@@ -2,6 +2,7 @@ package com.example.android.justjava;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -108,7 +109,30 @@ public class DisplayClass extends AppCompatActivity {
     private void displayTasks() {
 
         //class getAllClasses from TaskDBHelper
-        Cursor cursor = mDbHelper.getAllItems();
+        //Cursor cursor = mDbHelper.getAllItems();
+       SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                TimerContract.TimerEntry._ID,
+                TimerContract.TimerEntry.COLUMN_CLASS_NAME,
+                TimerContract.TimerEntry.COLUMN_TASK_NAME,
+                TimerContract.TimerEntry.COLUMN_START_TIME,
+                TimerContract.TimerEntry.COLUMN_ELAPSED_TIME};
+
+
+        String selection = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ?";
+
+        String[] selectionArgs = {classname};
+        // Perform a query on the pets table
+
+        Cursor cursor = db.query(
+                TimerContract.TimerEntry.TABLE_NAME,   // The table to query
+                projection,            // The columns to return
+                selection,                  // The columns for the WHERE clause////
+                selectionArgs,                  // The values for the WHERE clause
+                null,                  // Don't group the rows
+                null,                  // Don't filter by row groups
+                null);                   // The sort order
 
         //Error checking
         if (cursor == null)
@@ -119,6 +143,8 @@ public class DisplayClass extends AppCompatActivity {
         {
             return;
         }
+
+        //cursor.moveToFirst();
 
         //Places results in a string
         String[] columns = new String[] {
