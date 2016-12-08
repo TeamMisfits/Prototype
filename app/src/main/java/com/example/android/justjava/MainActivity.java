@@ -31,40 +31,31 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
+    //Message that is passed when clicking a listView item. This is classname
     public final static String EXTRA_MESSAGE = "com.example.androidexample";
-
-    //helper allowing access to data base
+    //Database helper
     private TaskDbHelper mDbHelper;
-
+    //cursor adapter, allows us to put database info into listview
     private SimpleCursorAdapter simpleCursorAdapter;
-
+    //instantiates list view
     ListView listView;
 
 
-
-    /******************************
-     * ON CREATE
-     **************************************/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        mDbHelper = new TaskDbHelper(this);
-
-        //ClassTaskMap = new HashMap<String, List<String>>();
-
-        //mClassNameEditText = (EditText) findViewById(R.id.choose_class_name);
-        //mTaskNameEditText = (EditText) findViewById(R.id.choose_task_name);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //identifies the listView
         listView = (ListView) findViewById(R.id.list);
+        //creates a new database helper
         mDbHelper = new TaskDbHelper(this);
 
+        //onClickListener used to see if the user pressed a list item
         listView.setOnItemClickListener(
                 new AdapterView.OnItemClickListener()
                 {
-                    //onClickListener used to see if the user pressed a list item
                     @Override
                     public void onItemClick(AdapterView<?> arg0, View view,int position, long arg3) {
 
@@ -72,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
                         String selectedClass = listView.getItemAtPosition(position).toString();
 
-
+                        //Finds the text that holds the class name in the listView
                         TextView textView = (TextView) view.findViewById(R.id.class_name);
                         String text = textView.getText().toString();
                         intent.putExtra(EXTRA_MESSAGE, text);
@@ -86,11 +77,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //display all classes upon starting the activity
         displayClasses();
     }
 
     public void createClass(View view) {
 
+        //simple enough. go to create class task
         Intent intent = new Intent(this, CreateClass.class);
 
         startActivity(intent);
@@ -99,7 +92,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayClasses() {
 
-            Cursor cursor = mDbHelper.getAllClasses();
+            //class getAllClasses from TaskDBHelper
+            Cursor cursor = mDbHelper.getAllItems();
+
+            //Error checking
             if (cursor == null)
             {
                 return;
@@ -108,12 +104,18 @@ public class MainActivity extends AppCompatActivity {
             {
                 return;
             }
+
+            //Places results in a string
             String[] columns = new String[] {
                     TimerEntry.COLUMN_CLASS_NAME,
             };
+
+            //binds the data to the text view that holds the class name
             int[] boundTo = new int[] {
                     R.id.class_name,
             };
+
+            //displays in listView using simpleCursorAdapter
             simpleCursorAdapter = new android.widget.SimpleCursorAdapter(this,
                     R.layout.layout,
                     cursor,
@@ -122,9 +124,4 @@ public class MainActivity extends AppCompatActivity {
                     0);
             listView.setAdapter(simpleCursorAdapter);
     }
-
-
-
-
-
 }
