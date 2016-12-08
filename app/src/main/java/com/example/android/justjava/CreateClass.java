@@ -40,7 +40,7 @@ public class CreateClass extends AppCompatActivity {
 
         //Initialize the info to be placed in the new class
         classNameString = mClassNameEditText.getText().toString().trim();
-        taskNameString = null;  //taskNameString as null means it is a class
+        taskNameString = "Lecture";  //taskNameString as null means it is a class
         startTime = 0;
         elapsedTime = 0;
 
