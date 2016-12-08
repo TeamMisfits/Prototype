@@ -94,8 +94,6 @@ public class MainActivity extends AppCompatActivity {
     private void displayClasses() {
 
             //class getAllClasses from TaskDBHelper
-            //Cursor cursor = mDbHelper.getAllItems();
-
             SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
             String[] projection = {
