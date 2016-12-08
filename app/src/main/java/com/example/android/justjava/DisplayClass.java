@@ -88,7 +88,15 @@ public class DisplayClass extends AppCompatActivity {
     public void deleteClass(View view){
 
         //Calls deleteClass function from TaskDBHelper
-        mDbHelper.deleteClass(classname);
+        // mDbHelper.deleteClass(classname);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        String whereClause = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ?";
+
+        String[] whereArgs = new String[] { classname };
+
+        db.delete(TimerContract.TimerEntry.TABLE_NAME, whereClause, whereArgs);
+
         //Outputs a toast message
         Toast.makeText(this, classname + " Deleted", Toast.LENGTH_SHORT).show();
         //Returns
