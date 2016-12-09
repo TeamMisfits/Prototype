@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
         String selection = TimerContract.TimerEntry.COLUMN_TASK_NAME + " = ?";
 
-            String[] selectionArgs = {"Lecture"};
+            String[] selectionArgs = {"CLASS"};
             // Perform a query on the pets table
 
             Cursor cursor = db.query(
