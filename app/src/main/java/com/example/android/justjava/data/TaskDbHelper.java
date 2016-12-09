@@ -15,7 +15,7 @@ public class TaskDbHelper extends SQLiteOpenHelper {
 
     //Database version
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "schedule1.db";
+    private static final String DATABASE_NAME = "schedule2.db";
 
     //creates instance of TaskDbHelper
 
@@ -32,7 +32,9 @@ public class TaskDbHelper extends SQLiteOpenHelper {
                 + TimerEntry.COLUMN_CLASS_NAME + " TEXT NOT NULL, "
                 + TimerEntry.COLUMN_TASK_NAME + " TEXT, "
                 + TimerEntry.COLUMN_START_TIME + " INTEGER, "
-                + TimerEntry.COLUMN_ELAPSED_TIME + " INTEGER);";
+                + TimerEntry.COLUMN_ELAPSED_TIME + " INTEGER, "
+                + TimerEntry.COLUMN_PREDICTED_TIME + " INTEGER, "
+                + TimerEntry.COLUMN_ACTIVE + " TEXT);";
 
         //actually creates data base
         db.execSQL(SQL_CREATE_SCHEDULE_TABLE);

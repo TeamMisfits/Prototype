@@ -69,7 +69,7 @@ public class DisplayClass extends AppCompatActivity {
 
                         //Finds the text that holds the task name in the listView
                         TextView textView = (TextView) view.findViewById(R.id.class_name);
-                        String text = textView.getText().toString();
+                        String[] text = new String[] {textView.getText().toString(), classname};
                         intent.putExtra(EXTRA_MESSAGE_THREE, text);
                         startActivity(intent);
                     }
@@ -123,10 +123,14 @@ public class DisplayClass extends AppCompatActivity {
                 TimerContract.TimerEntry.COLUMN_CLASS_NAME,
                 TimerContract.TimerEntry.COLUMN_TASK_NAME,
                 TimerContract.TimerEntry.COLUMN_START_TIME,
-                TimerContract.TimerEntry.COLUMN_ELAPSED_TIME};
+                TimerContract.TimerEntry.COLUMN_ELAPSED_TIME,
+                TimerContract.TimerEntry.COLUMN_PREDICTED_TIME,
+                TimerContract.TimerEntry.COLUMN_ACTIVE};
 
 
         String selection = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ?";
+               //+ "and " +
+                //TimerContract.TimerEntry.COLUMN_TASK_NAME + " != ?";
 
         String[] selectionArgs = {classname};
         // Perform a query on the pets table
