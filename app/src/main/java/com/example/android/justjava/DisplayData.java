@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.SimpleCursorAdapter;
 
@@ -31,9 +33,9 @@ import java.util.List;
 
 public class DisplayData extends AppCompatActivity {
 
-    private float[] yData = {25.4f, 10.6f, 66.7f, 33.4f};
+    private float[] yData = {25.4f, 10.6f};
 
-    private String[] xData = {"EC327", "SI482", "EC450", "SE570"};
+    private String[] xData = {"EK301", "EC327"};
 
     PieChart pieChart;
 
@@ -43,13 +45,18 @@ public class DisplayData extends AppCompatActivity {
 
     Spinner spin;
 
-    ArrayList<String> classNames;
+    Button button;
 
+    ArrayList<String> classname;
+
+    ArrayList<String> timespent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_data);
+
+        final Intent intent = getIntent();
 
         spin = (Spinner) findViewById(R.id.spinner);
         mDbHelper = new TaskDbHelper(this);
@@ -60,7 +67,7 @@ public class DisplayData extends AppCompatActivity {
         pieChart.setHoleRadius(0f);
         pieChart.setTransparentCircleAlpha(0);
 
-        getData();
+        setupSpinner();
         addDataSet(pieChart);
 
 
@@ -94,8 +101,20 @@ public class DisplayData extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                //Intent intent = new Intent(DisplayData.this, )
 
+                /*
+                switch (position) {
+                    case 0:
+                        Toast.makeText(parent.getContext(), xData[position] , Toast.LENGTH_SHORT).show();
+                        break;
+                    case 1:
+                        Toast.makeText(parent.getContext(), xData[position], Toast.LENGTH_SHORT).show();
+                        break;
+                   case 2:
+                        Toast.makeText(parent.getContext(), xData[position], Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                */
             }
 
             @Override
@@ -105,16 +124,33 @@ public class DisplayData extends AppCompatActivity {
             }
         });
 
+        button = (Button) findViewById(R.id.view_button);
+        button.setOnClickListener(new View.OnClickListener()
+        {
+
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(getApplicationContext(), ClassData.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
     private void addDataSet(PieChart pieChart) {
 
+        //TODO pass data in hours to yData as a String[] and pass class names to xData as String[]
+        //declare globally to allow for passing of class names from spinner
+
+        //String[] xData = (String[]) classname.toArray(new String[classname.size()]);
+        //String[] yData = (String[]) timespent.toArray(new String[timespent.size()]);
+
         ArrayList<PieEntry> yEntrys = new ArrayList<>();
         ArrayList<String> xEntrys = new ArrayList<>();
 
         for (int i = 0; i < yData.length; i++) {
-            yEntrys.add(new PieEntry(yData[i]));
+            yEntrys.add(new PieEntry((yData[i])));
         }
 
         for (int i = 0; i < xData.length; i++) {
@@ -155,7 +191,11 @@ public class DisplayData extends AppCompatActivity {
 
     }
 
-    public void getData() {
+
+    /******************************* GETS NAMES OF CLASSES FROM DB FOR SPINNER**********************************/
+
+
+    public void setupSpinner() {
 
         //class getAllClasses from TaskDBHelper
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -191,12 +231,8 @@ public class DisplayData extends AppCompatActivity {
             return;
         }
 
-
-
         String[] columns = new String[]{TimerContract.TimerEntry.COLUMN_CLASS_NAME,};
 
-
-        List<String> stringList = new ArrayList<String>(Arrays.asList(columns));
 
         //binds the data to the text view that holds the class name
         int[] boundTo = new int[] {
@@ -215,4 +251,62 @@ public class DisplayData extends AppCompatActivity {
         spin.setAdapter(simpleCursorAdapter);
 
     }
+
+    private void getData(){
+
+        //class getAllClasses from TaskDBHelper
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                TimerContract.TimerEntry._ID,
+                TimerContract.TimerEntry.COLUMN_CLASS_NAME,
+                TimerContract.TimerEntry.COLUMN_TASK_NAME,
+                TimerContract.TimerEntry.COLUMN_START_TIME,
+                TimerContract.TimerEntry.COLUMN_ELAPSED_TIME,
+                TimerContract.TimerEntry.COLUMN_PREDICTED_TIME};
+
+        // Perform a query on the pets table
+
+        Cursor cursor = db.query(
+                TimerContract.TimerEntry.TABLE_NAME,    // The table to query
+                projection,                             // Returns all columns
+                null,                              // filter the class and task name if the class and task name are not equal to (taskname and class)
+                null,                          //
+                null,                                   // Don't group the rows
+                null,                                   // Don't filter by row groups
+                null);                                  // The sort order
+
+
+        if (cursor == null) {
+            return;
+        }
+        if (cursor.getCount() == 0) {
+            return;
+        }
+
+
+        /*
+        //moves to first row
+        cursor.moveToFirst();
+
+
+        int elapsedTimeColumnIndex = cursor.getColumnIndex(TimerContract.TimerEntry.COLUMN_ELAPSED_TIME);
+
+        int predictedTimeColumnIndex = cursor.getColumnIndex(TimerContract.TimerEntry.COLUMN_PREDICTED_TIME);
+
+        //gets the value from elapsed time as long
+        long elapsedTime = cursor.getLong(elapsedTimeColumnIndex);
+
+        double predictedTime = cursor.getDouble(predictedTimeColumnIndex);
+
+        double seconds = (double)elapsedTime;
+
+        seconds = seconds / 3600;
+
+        elapsedTimeView.setText(Double.toString(seconds) + " hours");
+
+        predictedTimeView.setText(Double.toString(predictedTime) + " hours");
+        */
+    }
+
 }

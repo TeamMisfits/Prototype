@@ -29,7 +29,8 @@
             android:name=".CreateTask"
             android:label="Create Task " />
         <activity android:name=".DisplayTask" />
-        <activity android:name=".DisplayData"></activity>
+        <activity android:name=".DisplayData" />
+        <activity android:name=".ClassData"></activity>
     </application>
 
 </manifest>
