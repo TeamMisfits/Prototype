@@ -1,11 +1,14 @@
 package com.example.android.justjava;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -40,6 +43,7 @@ public class DisplayData extends AppCompatActivity {
 
     Spinner spin;
 
+    ArrayList<String> classNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +88,23 @@ public class DisplayData extends AppCompatActivity {
 
             }
         });
+
+        spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                //Intent intent = new Intent(DisplayData.this, )
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+                // sometimes you need nothing here
+            }
+        });
+
+
     }
 
     private void addDataSet(PieChart pieChart) {
@@ -143,7 +164,8 @@ public class DisplayData extends AppCompatActivity {
                 TimerContract.TimerEntry.COLUMN_CLASS_NAME,
                 TimerContract.TimerEntry.COLUMN_TASK_NAME,
                 TimerContract.TimerEntry.COLUMN_START_TIME,
-                TimerContract.TimerEntry.COLUMN_ELAPSED_TIME};
+                TimerContract.TimerEntry.COLUMN_ELAPSED_TIME,
+                TimerContract.TimerEntry.COLUMN_PREDICTED_TIME};
 
 
         String selection = TimerContract.TimerEntry.COLUMN_TASK_NAME + " = ?";
@@ -169,10 +191,9 @@ public class DisplayData extends AppCompatActivity {
         }
 
 
-        //Places results in a string
-        String[] columns = new String[]{
-                TimerContract.TimerEntry.COLUMN_CLASS_NAME,
-        };
+
+        String[] columns = new String[]{TimerContract.TimerEntry.COLUMN_CLASS_NAME,};
+
 
         List<String> stringList = new ArrayList<String>(Arrays.asList(columns));
 
