@@ -43,10 +43,8 @@ public class DisplayData extends AppCompatActivity {
 
     Spinner spin;
 
-<<<<<<< HEAD
     ArrayList<String> classNames;
-=======
->>>>>>> origin/data_activity
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +118,7 @@ public class DisplayData extends AppCompatActivity {
         }
 
         for (int i = 0; i < xData.length; i++) {
-            xEntrys.add(new String(xData[i]));
+            xEntrys.add((xData[i]));
         }
 
         //Create data set
