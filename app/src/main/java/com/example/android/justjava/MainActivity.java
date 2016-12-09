@@ -99,9 +99,9 @@ public class MainActivity extends AppCompatActivity {
             String[] projection = {
                     TimerContract.TimerEntry._ID,
                     TimerContract.TimerEntry.COLUMN_CLASS_NAME,
-                    TimerContract.TimerEntry.COLUMN_TASK_NAME,
-                    TimerContract.TimerEntry.COLUMN_START_TIME,
-                    TimerContract.TimerEntry.COLUMN_ELAPSED_TIME};
+                    TimerContract.TimerEntry.COLUMN_TASK_NAME};
+                    //TimerContract.TimerEntry.COLUMN_START_TIME,
+                    //TimerContract.TimerEntry.COLUMN_ELAPSED_TIME};
 
 
         String selection = TimerContract.TimerEntry.COLUMN_TASK_NAME + " = ?";

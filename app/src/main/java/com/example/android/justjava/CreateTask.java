@@ -16,6 +16,8 @@ public class CreateTask extends AppCompatActivity {
 
     //defines the edit text view
     private EditText mTaskNameEditText;
+
+    private EditText mPredictedTimeEditText;
     //database helper
     TaskDbHelper mDbHelper;
 
@@ -24,6 +26,8 @@ public class CreateTask extends AppCompatActivity {
     String taskNameString;
     long startTime;
     long elapsedTime;
+    double predictedTime;
+    String active;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,8 @@ public class CreateTask extends AppCompatActivity {
 
         mTaskNameEditText = (EditText) findViewById(R.id.getTaskName);
 
+        mPredictedTimeEditText = (EditText) findViewById(R.id.getPredictedTime);
+
         // Create database helper
         mDbHelper = new TaskDbHelper(this);
     }
@@ -48,6 +54,8 @@ public class CreateTask extends AppCompatActivity {
         taskNameString = mTaskNameEditText.getText().toString().trim();;
         startTime = 0;
         elapsedTime = 0;
+        predictedTime = Double.parseDouble(mPredictedTimeEditText.getText().toString().trim());
+        active = "ACTIVE";
 
         // Gets the database in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -61,6 +69,8 @@ public class CreateTask extends AppCompatActivity {
         values.put(TimerContract.TimerEntry.COLUMN_TASK_NAME, taskNameString);
         values.put(TimerContract.TimerEntry.COLUMN_START_TIME, startTime);
         values.put(TimerContract.TimerEntry.COLUMN_ELAPSED_TIME, elapsedTime);
+        values.put(TimerContract.TimerEntry.COLUMN_PREDICTED_TIME, predictedTime);
+        values.put(TimerContract.TimerEntry.COLUMN_ACTIVE, active);
 
         // Insert a new row in the database, returning the ID of that new row.
         long newRowId = db.insert(TimerContract.TimerEntry.TABLE_NAME, null, values);

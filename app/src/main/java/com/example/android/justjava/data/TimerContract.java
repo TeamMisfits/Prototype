@@ -37,5 +37,9 @@ public final class TimerContract {
         //end time for the task
 
         public static final String COLUMN_ELAPSED_TIME = "totalTime";
+
+        public static final String COLUMN_PREDICTED_TIME = "predictedTime";
+
+        public static final String COLUMN_ACTIVE = "active";
     }
 }

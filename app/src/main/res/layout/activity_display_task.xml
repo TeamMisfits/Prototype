@@ -45,8 +45,7 @@
                 android:id="@+id/time_spent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Time"/>
+                android:gravity="center" />
 
         </LinearLayout>
 
@@ -84,18 +83,22 @@
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:id = "@+id/startButton"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:textSize="26dp"
-            android:text="Start"/>
+            android:text="Start"
+            android:onClick = "changeStartTime"/>
 
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:id = "@+id/stopButton"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:textSize="26dp"
-            android:text="Stop"/>
+            android:text="Stop"
+            android:onClick = "changeStopTime"/>
 
 
     </LinearLayout>
@@ -105,12 +108,19 @@
         android:layout_height="wrap_content">
 
         <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text = "Finish Task"
+            android:onClick="finishTask"/>
+
+        <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:textSize="26dp"
-            android:text="Delete Task"/>
+            android:text="Delete Task"
+            android:onClick="deleteTask"/>
 
 
     </LinearLayout>

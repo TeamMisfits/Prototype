@@ -23,6 +23,8 @@ public class CreateClass extends AppCompatActivity {
     String taskNameString;
     long startTime;
     long elapsedTime;
+    double projectedTime;
+    String active;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,8 @@ public class CreateClass extends AppCompatActivity {
         taskNameString = "Lecture";  //taskNameString as null means it is a class
         startTime = 0;
         elapsedTime = 0;
+        projectedTime = 0;
+        active = "ACTIVE";
 
         // Gets the database in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -56,6 +60,8 @@ public class CreateClass extends AppCompatActivity {
         values.put(TimerContract.TimerEntry.COLUMN_TASK_NAME, taskNameString);
         values.put(TimerContract.TimerEntry.COLUMN_START_TIME, startTime);
         values.put(TimerContract.TimerEntry.COLUMN_ELAPSED_TIME, elapsedTime);
+        values.put(TimerContract.TimerEntry.COLUMN_PREDICTED_TIME, projectedTime);
+        values.put(TimerContract.TimerEntry.COLUMN_ACTIVE, active);
 
         // Insert a new row in the database, returning the ID of that new row.
         long newRowId = db.insert(TimerContract.TimerEntry.TABLE_NAME, null, values);
