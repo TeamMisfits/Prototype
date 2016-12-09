@@ -14,7 +14,8 @@
 
     <Button
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:text = "Create Class"
         android:background="@color/colorAccent"
         android:onClick = "createClass"
@@ -23,9 +24,18 @@
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="7">
 
     </ListView>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text = "Display Data"
+        android:background="@color/colorPrimary"
+        android:onClick = "displayData"/>
 
     
 </LinearLayout>

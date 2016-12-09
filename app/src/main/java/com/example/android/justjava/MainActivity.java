@@ -91,6 +91,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void displayData(View view){
+
+        //simple enough. go to create class task
+        Intent intent = new Intent(this, DisplayData.class);
+
+        startActivity(intent);
+    }
+
     private void displayClasses() {
 
             //class getAllClasses from TaskDBHelper
