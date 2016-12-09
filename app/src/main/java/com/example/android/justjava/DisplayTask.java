@@ -57,6 +57,7 @@ public class DisplayTask extends AppCompatActivity {
         taskname = taskClassArray[0];
 
         classname = taskClassArray[1];
+
         //sets text to taskname
         textView.setText(classname + ": " + taskname);
 
@@ -102,13 +103,13 @@ public class DisplayTask extends AppCompatActivity {
         // Perform a query on the pets table
 
         Cursor cursor = db.query(
-                TimerContract.TimerEntry.TABLE_NAME,   // The table to query
-                projection,            // The columns to return
-                selection,                  // The columns for the WHERE clause////
-                selectionArgs,                  // The values for the WHERE clause
-                null,                  // Don't group the rows
-                null,                  // Don't filter by row groups
-                null);                   // The sort order
+                TimerContract.TimerEntry.TABLE_NAME,    // The table to query
+                projection,                             // Returns all columns
+                selection,                              // filter the class and task name if the class and task name are not equal to (taskname and class)
+                selectionArgs,                          //
+                null,                                   // Don't group the rows
+                null,                                   // Don't filter by row groups
+                null);                                  // The sort order
 
 
         if (cursor == null) {
@@ -118,12 +119,22 @@ public class DisplayTask extends AppCompatActivity {
             return;
         }
 
+        /*
+
+        The cursor now holds all rows with class name and task equal to those specified.
+
+
+         */
+
+        //moves to first row
         cursor.moveToFirst();
+
 
         int elapsedTimeColumnIndex = cursor.getColumnIndex(TimerContract.TimerEntry.COLUMN_ELAPSED_TIME);
 
         int predictedTimeColumnIndex = cursor.getColumnIndex(TimerContract.TimerEntry.COLUMN_PREDICTED_TIME);
 
+        //gets the value from elapsed time as long
         long elapsedTime = cursor.getLong(elapsedTimeColumnIndex);
 
         double predictedTime = cursor.getDouble(predictedTimeColumnIndex);
