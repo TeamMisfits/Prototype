@@ -15,7 +15,7 @@ public class TaskDbHelper extends SQLiteOpenHelper {
 
     //Database version
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "schedule2.db";
+    private static final String DATABASE_NAME = "schedule3.db";
 
     //creates instance of TaskDbHelper
 

@@ -128,11 +128,13 @@ public class DisplayClass extends AppCompatActivity {
                 TimerContract.TimerEntry.COLUMN_ACTIVE};
 
 
-        String selection = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ?";
+        String selection = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ? and "
+                + TimerContract.TimerEntry.COLUMN_TASK_NAME + " != ? and "
+                + TimerContract.TimerEntry.COLUMN_ACTIVE + " = ?";
                //+ "and " +
                 //TimerContract.TimerEntry.COLUMN_TASK_NAME + " != ?";
 
-        String[] selectionArgs = {classname};
+        String[] selectionArgs = {classname, "CLASS", "ACTIVE"};
         // Perform a query on the pets table
 
         Cursor cursor = db.query(

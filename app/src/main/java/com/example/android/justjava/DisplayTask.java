@@ -73,7 +73,7 @@ public class DisplayTask extends AppCompatActivity {
 
         displayData();
 
-        stopButton.setVisibility(View.INVISIBLE);
+        //stopButton.setVisibility(View.INVISIBLE);
     }
 
     @Override

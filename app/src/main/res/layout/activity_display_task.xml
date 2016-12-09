@@ -98,7 +98,8 @@
             android:layout_gravity="center_vertical"
             android:textSize="26dp"
             android:text="Stop"
-            android:onClick = "changeStopTime"/>
+            android:onClick = "changeStopTime"
+            android:visibility = "gone"/>
 
 
     </LinearLayout>
