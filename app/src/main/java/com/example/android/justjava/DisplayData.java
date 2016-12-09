@@ -43,7 +43,10 @@ public class DisplayData extends AppCompatActivity {
 
     Spinner spin;
 
+<<<<<<< HEAD
     ArrayList<String> classNames;
+=======
+>>>>>>> origin/data_activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
