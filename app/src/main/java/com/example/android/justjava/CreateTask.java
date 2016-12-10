@@ -57,7 +57,7 @@ public class CreateTask extends AppCompatActivity {
         startTime = 0;
         elapsedTime = 0;
         predictedTime = Double.parseDouble(mPredictedTimeEditText.getText().toString().trim());
-        active = "ACTIVE";
+        active = "ACTIVE/STOPPED";
 
         // Gets the database in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
