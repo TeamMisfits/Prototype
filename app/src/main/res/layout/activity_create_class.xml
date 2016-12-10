@@ -27,9 +27,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="3"
-            android:text="OK"
+            android:text="Create"
             android:background="@color/colorAccent"
-            android:onClick="saveClass"/>
+            android:onClick="saveClass"
+            android:textColor="@android:color/white" />
 
 
     </LinearLayout>

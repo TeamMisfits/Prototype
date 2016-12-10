@@ -35,21 +35,28 @@
         android:inputType="textCapWords"/>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text = "Start"
-        android:onClick = "startTime"/>
+        android:onClick = "startTime"
+        android:background="@color/colorAccent"
+        android:textColor="@android:color/white" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text = "Stop"
-        android:onClick = "stopTime"/>
+        android:onClick = "stopTime"
+        android:background="#f67d7d"
+        android:textColor="@android:color/white"
+        android:elevation="0dp" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text = "View Time Spent"
-        android:onClick = "GoToStats"/>
+        android:text = "View Time Spent on Assignment"
+        android:onClick = "GoToStats"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary" />
 
 </LinearLayout>
