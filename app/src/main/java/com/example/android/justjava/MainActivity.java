@@ -8,12 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.view.View.OnClickListener;
 
 
 
@@ -21,23 +18,18 @@ import com.example.android.justjava.data.TaskDbHelper;
 import com.example.android.justjava.data.TimerContract;
 import com.example.android.justjava.data.TimerContract.TimerEntry;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 
 public class MainActivity extends AppCompatActivity {
 
     //Message that is passed when clicking a listView item. This is classname
     public final static String EXTRA_MESSAGE = "com.example.androidexample";
+
     //Database helper
     private TaskDbHelper mDbHelper;
+
     //cursor adapter, allows us to put database info into listview
     private SimpleCursorAdapter simpleCursorAdapter;
+
     //instantiates list view
     ListView listView;
 
@@ -48,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //identifies the listView
+        //identifies the listView from XML File
         listView = (ListView) findViewById(R.id.list);
         //creates a new database helper
         mDbHelper = new TaskDbHelper(this);
@@ -60,13 +52,14 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(AdapterView<?> arg0, View view,int position, long arg3) {
 
+                        //Create intent to send to DisplayClass
                         Intent intent = new Intent(MainActivity.this, DisplayClass.class);
-
-                        String selectedClass = listView.getItemAtPosition(position).toString();
 
                         //Finds the text that holds the class name in the listView
                         TextView textView = (TextView) view.findViewById(R.id.class_name);
                         String text = textView.getText().toString();
+
+                        //adds it to the intent and sends
                         intent.putExtra(EXTRA_MESSAGE, text);
                         startActivity(intent);
                     }
@@ -78,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
         //display all classes upon starting the activity
         displayClasses();
     }
@@ -86,24 +80,23 @@ public class MainActivity extends AppCompatActivity {
 
         //simple enough. go to create class task
         Intent intent = new Intent(this, CreateClass.class);
-
         startActivity(intent);
 
     }
 
     public void displayData(View view){
 
-        //simple enough. go to create class task
+        //simple enough. go to display data task
         Intent intent = new Intent(this, DisplayData.class);
-
         startActivity(intent);
     }
 
     private void displayClasses() {
 
-            //class getAllClasses from TaskDBHelper
+            //gets a SQLite Database
             SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
+            //determines which columns to return
             String[] projection = {
                     TimerContract.TimerEntry._ID,
                     TimerContract.TimerEntry.COLUMN_CLASS_NAME,
@@ -111,20 +104,22 @@ public class MainActivity extends AppCompatActivity {
                     //TimerContract.TimerEntry.COLUMN_START_TIME,
                     //TimerContract.TimerEntry.COLUMN_ELAPSED_TIME};
 
+            //which rows to return
+            String selection = TimerContract.TimerEntry.COLUMN_TASK_NAME + " = ?";
 
-        String selection = TimerContract.TimerEntry.COLUMN_TASK_NAME + " = ?";
-
+            //arguments to filter rows by
             String[] selectionArgs = {"CLASS"};
-            // Perform a query on the pets table
 
+            //querys the database using the parameters defined above
             Cursor cursor = db.query(
-                    TimerContract.TimerEntry.TABLE_NAME,   // The table to query
-                    projection,            // The columns to return
-                    selection,                  // The columns for the WHERE clause////
-                    selectionArgs,                  // The values for the WHERE clause
-                    null,                  // Don't group the rows
-                    null,                  // Don't filter by row groups
-                    null);                   // The sort order
+                    TimerContract.TimerEntry.TABLE_NAME,    // The table to query
+                    projection,                             // The columns to return
+                    selection,                              // The columns for the WHERE clause////
+                    selectionArgs,                          // The values for the WHERE clause
+                    null,                                   // Don't group the rows
+                    null,                                   // Don't filter by row groups
+                    null);                                  // The sort order
+
 
             //Error checking
             if (cursor == null)
@@ -136,15 +131,11 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            //Places results in a string
-            String[] columns = new String[] {
-                    TimerEntry.COLUMN_CLASS_NAME,
-            };
+            //which column from the cursor will be used for the adapter
+            String[] columns = new String[] {TimerEntry.COLUMN_CLASS_NAME,};
 
-            //binds the data to the text view that holds the class name
-            int[] boundTo = new int[] {
-                    R.id.class_name,
-            };
+            //which view to bind the data to for the adapter
+            int[] boundTo = new int[] {R.id.class_name,};
 
             //displays in listView using simpleCursorAdapter
             simpleCursorAdapter = new android.widget.SimpleCursorAdapter(this,
@@ -153,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
                     columns,
                     boundTo,
                     0);
+
             listView.setAdapter(simpleCursorAdapter);
     }
 }
