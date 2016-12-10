@@ -16,10 +16,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text = "Create Class"
+        android:text = "Add a course"
         android:background="@color/colorAccent"
         android:onClick = "createClass"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="16dp"
+        android:textColor="@android:color/white" />
     
     <ListView
         android:id="@+id/list"
@@ -35,7 +36,8 @@
         android:layout_weight="1"
         android:text = "Display Data"
         android:background="@color/colorPrimary"
-        android:onClick = "displayData"/>
+        android:onClick = "displayData"
+        android:textColor="@android:color/white" />
 
     
 </LinearLayout>

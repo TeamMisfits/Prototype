@@ -33,18 +33,23 @@
             android:layout_height="match_parent"
             android:text = "Delete Class"
             android:textAlignment="center"
-            android:background="@color/colorAccent"
-            android:layout_weight="1" />
+
+            android:background="#f67d7d"
+            android:layout_weight="1"
+            android:onClick="deleteClass"
+            android:textColor="@android:color/white" />
+
 
     </LinearLayout>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorAccent"
         android:text="Create Task"
         android:layout_marginBottom="26dp"
-        android:onClick="createTask"/>
+        android:onClick="createTask"
+        android:textColor="@android:color/white" />
 
     <ListView
         android:id="@+id/list"
