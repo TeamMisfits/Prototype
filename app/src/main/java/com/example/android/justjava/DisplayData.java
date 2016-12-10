@@ -27,15 +27,18 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class DisplayData extends AppCompatActivity {
 
-    private float[] yData = {25.4f, 10.6f};
+    public final static String EXTRA_MESSAGE = "com.example.androidexample";
 
-    private String[] xData = {"EK301", "EC327"};
+    private Float[] yData;
+
+    private String[] xData;
 
     PieChart pieChart;
 
@@ -47,9 +50,9 @@ public class DisplayData extends AppCompatActivity {
 
     Button button;
 
-    ArrayList<String> classname;
+    Cursor cursor;
 
-    ArrayList<String> timespent;
+    int selection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,8 @@ public class DisplayData extends AppCompatActivity {
         pieChart.setTransparentCircleAlpha(0);
 
         setupSpinner();
+        getClassNamesData();
+        getElapsedTimeData();
         addDataSet(pieChart);
 
 
@@ -100,21 +105,8 @@ public class DisplayData extends AppCompatActivity {
         spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-
-                /*
-                switch (position) {
-                    case 0:
-                        Toast.makeText(parent.getContext(), xData[position] , Toast.LENGTH_SHORT).show();
-                        break;
-                    case 1:
-                        Toast.makeText(parent.getContext(), xData[position], Toast.LENGTH_SHORT).show();
-                        break;
-                   case 2:
-                        Toast.makeText(parent.getContext(), xData[position], Toast.LENGTH_SHORT).show();
-                        break;
-                }
-                */
+                        //change variable that says which data set to go to on ClassData
+                        selection = position;
             }
 
             @Override
@@ -132,6 +124,8 @@ public class DisplayData extends AppCompatActivity {
             public void onClick(View v)
             {
                 Intent intent = new Intent(getApplicationContext(), ClassData.class);
+                String className = xData[selection];
+                intent.putExtra(EXTRA_MESSAGE, className);
                 startActivity(intent);
             }
         });
@@ -140,22 +134,26 @@ public class DisplayData extends AppCompatActivity {
 
     private void addDataSet(PieChart pieChart) {
 
-        //TODO pass data in hours to yData as a String[] and pass class names to xData as String[]
-        //declare globally to allow for passing of class names from spinner
-
-        //String[] xData = (String[]) classname.toArray(new String[classname.size()]);
-        //String[] yData = (String[]) timespent.toArray(new String[timespent.size()]);
-
         ArrayList<PieEntry> yEntrys = new ArrayList<>();
         ArrayList<String> xEntrys = new ArrayList<>();
 
-        for (int i = 0; i < yData.length; i++) {
-            yEntrys.add(new PieEntry((yData[i])));
+        //Error check to see if there is any data
+        if (xData == null || yData == null)
+        {
+            yEntrys.add(new PieEntry(0));
+            xEntrys.add("0");
+        }
+        else {
+
+            for (int i = 0; i < yData.length; i++) {
+                yEntrys.add(new PieEntry(yData[i]));
+            }
+
+            for (int i = 0; i < xData.length; i++) {
+                xEntrys.add((xData[i]));
+            }
         }
 
-        for (int i = 0; i < xData.length; i++) {
-            xEntrys.add((xData[i]));
-        }
 
         //Create data set
         PieDataSet pieDataSet = new PieDataSet(yEntrys, "Class Hours");
@@ -211,7 +209,7 @@ public class DisplayData extends AppCompatActivity {
 
         String selection = TimerContract.TimerEntry.COLUMN_TASK_NAME + " = ?";
 
-        String[] selectionArgs = {"Lecture"};
+        String[] selectionArgs = {"CLASS"};
         // Perform a query on the pets table
 
         Cursor cursor = db.query(
@@ -222,14 +220,6 @@ public class DisplayData extends AppCompatActivity {
                 null,                  // Don't group the rows
                 null,                  // Don't filter by row groups
                 null);                   // The sort order
-
-        //Error checking
-        if (cursor == null) {
-            return;
-        }
-        if (cursor.getCount() == 0) {
-            return;
-        }
 
         String[] columns = new String[]{TimerContract.TimerEntry.COLUMN_CLASS_NAME,};
 
@@ -252,8 +242,7 @@ public class DisplayData extends AppCompatActivity {
 
     }
 
-    private void getData(){
-
+    public void getClassNamesData(){
         //class getAllClasses from TaskDBHelper
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
@@ -265,13 +254,16 @@ public class DisplayData extends AppCompatActivity {
                 TimerContract.TimerEntry.COLUMN_ELAPSED_TIME,
                 TimerContract.TimerEntry.COLUMN_PREDICTED_TIME};
 
-        // Perform a query on the pets table
+        //look in the following rows (for next action)
+        String selection = TimerContract.TimerEntry.COLUMN_TASK_NAME + " = ?";
+
+        String[] selectionArgs = {"CLASS"};
 
         Cursor cursor = db.query(
                 TimerContract.TimerEntry.TABLE_NAME,    // The table to query
                 projection,                             // Returns all columns
-                null,                              // filter the class and task name if the class and task name are not equal to (taskname and class)
-                null,                          //
+                selection,                              // filter the class and task name if the class and task name are not equal to (taskname and class)
+                selectionArgs,                          //
                 null,                                   // Don't group the rows
                 null,                                   // Don't filter by row groups
                 null);                                  // The sort order
@@ -285,28 +277,84 @@ public class DisplayData extends AppCompatActivity {
         }
 
 
-        /*
         //moves to first row
         cursor.moveToFirst();
 
+        //column to index through
+        int classNamesColumnIndex = cursor.getColumnIndex(TimerContract.TimerEntry.COLUMN_CLASS_NAME);
 
-        int elapsedTimeColumnIndex = cursor.getColumnIndex(TimerContract.TimerEntry.COLUMN_ELAPSED_TIME);
+        //initialize array list to hold class names after iteration through cursor
+        ArrayList<String> xDataList = new ArrayList<>();
 
-        int predictedTimeColumnIndex = cursor.getColumnIndex(TimerContract.TimerEntry.COLUMN_PREDICTED_TIME);
+        //iterate through cursor and add class names to arraylist
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            String classNames = cursor.getString(classNamesColumnIndex);
+            xDataList.add(classNames);
+        }
 
-        //gets the value from elapsed time as long
-        long elapsedTime = cursor.getLong(elapsedTimeColumnIndex);
+        //convert the arraylist into a string array for piechart usage
+        xData = xDataList.toArray(new String[xDataList.size()]);
+    }
 
-        double predictedTime = cursor.getDouble(predictedTimeColumnIndex);
 
-        double seconds = (double)elapsedTime;
+    public void getElapsedTimeData(){
+        //class getAllClasses from TaskDBHelper
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        seconds = seconds / 3600;
+        String[] projection = {
+                TimerContract.TimerEntry._ID,
+                TimerContract.TimerEntry.COLUMN_CLASS_NAME,
+                TimerContract.TimerEntry.COLUMN_TASK_NAME,
+                TimerContract.TimerEntry.COLUMN_START_TIME,
+                TimerContract.TimerEntry.COLUMN_ELAPSED_TIME,
+                TimerContract.TimerEntry.COLUMN_PREDICTED_TIME,
+                TimerContract.TimerEntry.COLUMN_ACTIVE};
 
-        elapsedTimeView.setText(Double.toString(seconds) + " hours");
+        //look in the following rows (for next action)
+        String selection = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ? and "
+                + TimerContract.TimerEntry.COLUMN_ACTIVE + " = ?";
 
-        predictedTimeView.setText(Double.toString(predictedTime) + " hours");
-        */
+        //Arraylist to hold results from query to get data
+        ArrayList<Float> yDataList = new ArrayList<>();
+
+
+        if (xData != null) {
+            for (int i = 0; i < xData.length; i++) {
+
+                //check above rows to see if they have the following criteria
+                String[] selectionArgs = {xData[i], "ACTIVE"};
+
+                cursor = db.query(
+                        TimerContract.TimerEntry.TABLE_NAME,    // The table to query
+                        projection,                             // Returns all columns
+                        selection,                              // filter the class and task name if the class and task name are not equal to (taskname and class)
+                        selectionArgs,                          //
+                        null,                                   // Don't group the rows
+                        null,                                   // Don't filter by row groups
+                        null);                                  // The sort order
+
+
+                //moves to first row
+                cursor.moveToFirst();
+
+                //looking through
+                int elapsedTimeColumnIndex = cursor.getColumnIndex(TimerContract.TimerEntry.COLUMN_ELAPSED_TIME);
+
+                Float elapsedTime = new Float(0);
+
+                for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                    Float currentElapsedTime = cursor.getFloat(elapsedTimeColumnIndex);
+                    elapsedTime += currentElapsedTime;
+                }
+
+
+                elapsedTime /= 3600;
+                yDataList.add(elapsedTime);
+
+            }
+
+            yData = yDataList.toArray(new Float[yDataList.size()]);
+        }
     }
 
 }
