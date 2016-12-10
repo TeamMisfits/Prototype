@@ -12,10 +12,14 @@ import android.widget.Toast;
 import com.example.android.justjava.data.TaskDbHelper;
 import com.example.android.justjava.data.TimerContract;
 
+//activity for creating a new class
+//called after clicking on create a class in the main activity
+//includes functions for saving a class and error checking if the class has already been made
 public class CreateClass extends AppCompatActivity {
 
-    //defines the edit text view
+    //defines the edit text view where class name is entered
     private EditText mClassNameEditText;
+
     //defines the database helper
     TaskDbHelper mDbHelper;
 
@@ -32,7 +36,7 @@ public class CreateClass extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_class);
 
-        //identifies the edit text view
+        //identifies the edit text view where class is entered
         mClassNameEditText = (EditText) findViewById(R.id.getClassName);
 
         // Create database helper
@@ -40,6 +44,8 @@ public class CreateClass extends AppCompatActivity {
     }
 
     public void saveClass(View view) {
+        //called when OK button is hit
+        //function saves new class to the data base
 
         //Initialize the info to be placed in the new class
 
@@ -52,7 +58,8 @@ public class CreateClass extends AppCompatActivity {
             classNameString = mClassNameEditText.getText().toString().trim();
         }
 
-        taskNameString = "CLASS";  //taskNameString as null means it is a class
+        taskNameString = "CLASS";  //taskNameString as "CLASS" means it is a class and not a task
+        //sets defaults for all other columns in the data base for a class
         startTime = 0;
         elapsedTime = 0;
         projectedTime = 0;
@@ -69,7 +76,7 @@ public class CreateClass extends AppCompatActivity {
         boolean result = isDuplicateClass(classNameString);
 
         if (!result) {
-            //places values into the database
+            //places values entered above into the values object
             values.put(TimerContract.TimerEntry.COLUMN_CLASS_NAME, classNameString);
             values.put(TimerContract.TimerEntry.COLUMN_TASK_NAME, taskNameString);
             values.put(TimerContract.TimerEntry.COLUMN_START_TIME, startTime);
@@ -87,20 +94,22 @@ public class CreateClass extends AppCompatActivity {
                 Toast.makeText(this, "Error with saving", Toast.LENGTH_SHORT).show();
             }
             else {
-                // Otherwise, the insertion was successful and we can display a toast with the row ID.
+                // Otherwise, the insertion was successful
                 Toast.makeText(this, "Created Class: " + classNameString, Toast.LENGTH_SHORT).show();
             }
+            //ends the activity and returns to main activity
             finish();
         }
 
         else if (result){
+            //if class is duplicate, returns an error message as a toast message
             Toast.makeText(this,  classNameString + " Already Exists!", Toast.LENGTH_SHORT).show();
         }
 
     }
 
     public boolean isDuplicateClass(String inputClassName) {
-
+    //function to check if the class entered is already in the database
 
         //gets a SQLite Database
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -138,13 +147,14 @@ public class CreateClass extends AppCompatActivity {
             return false;
         }
 
-        //moves cursor to firstrow
+        //moves cursor to firstrow in the cursor
         cursor.moveToFirst();
 
-        //indexes specified column
+        //index for specified column in the cursor
         int classColumnIndex = cursor.getColumnIndex(TimerContract.TimerEntry.COLUMN_CLASS_NAME);
 
         //for all the rows, if the inputClassName equals a name of an existing class return false.
+        //loops through each row in the cursor
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
 
             String className = cursor.getString(classColumnIndex);

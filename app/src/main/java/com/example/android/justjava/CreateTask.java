@@ -15,9 +15,11 @@ import com.example.android.justjava.data.TimerContract;
 
 import java.lang.reflect.InvocationTargetException;
 
+//activity to make a new class, called when create task button clicked in displayClass activity
+//includes function to make a new task and check if the task already exists
 public class CreateTask extends AppCompatActivity {
 
-    //defines the edit text view
+    //defines the edit text views
     private EditText mTaskNameEditText;
 
     private EditText mPredictedTimeEditText;
@@ -25,7 +27,7 @@ public class CreateTask extends AppCompatActivity {
     //database helper
     TaskDbHelper mDbHelper;
 
-    //Elements to be stored
+    //Elements to be stored in the new row of the database
     String classNameString;
     String taskNameString;
     long startTime;
@@ -43,6 +45,7 @@ public class CreateTask extends AppCompatActivity {
 
         classNameString = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
 
+        //finds the taskname and predicted time editText views
         mTaskNameEditText = (EditText) findViewById(R.id.getTaskName);
 
         mPredictedTimeEditText = (EditText) findViewById(R.id.getPredictedTime);
@@ -85,8 +88,10 @@ public class CreateTask extends AppCompatActivity {
         // and attributes from the editor are the values.
         ContentValues values = new ContentValues();
 
+        //checks if the task already exists
         boolean result = isDuplicateTask(taskNameString);
 
+        //if a novel task, populates the values object
         if(!result) {
             //places values into the database
             values.put(TimerContract.TimerEntry.COLUMN_CLASS_NAME, classNameString);
@@ -96,7 +101,7 @@ public class CreateTask extends AppCompatActivity {
             values.put(TimerContract.TimerEntry.COLUMN_PREDICTED_TIME, predictedTime);
             values.put(TimerContract.TimerEntry.COLUMN_ACTIVE, active);
 
-            // Insert a new row in the database, returning the ID of that new row.
+            // Insert a new row in the database using the values in "values" object, returning the ID of that new row.
             long newRowId = db.insert(TimerContract.TimerEntry.TABLE_NAME, null, values);
 
             // Show a toast message depending on whether or not the insertion was successful
@@ -104,11 +109,13 @@ public class CreateTask extends AppCompatActivity {
                 // If the row ID is -1, then there was an error with insertion.
                 Toast.makeText(this, "Error with saving", Toast.LENGTH_SHORT).show();
             } else {
-                // Otherwise, the insertion was successful and we can display a toast with the row ID.
+                // Otherwise, the insertion was successful
                 Toast.makeText(this, "Created Task: " + taskNameString + " in " + classNameString, Toast.LENGTH_SHORT).show();
             }
+            //returns to displayClass activity
             finish();
         }
+        //if task exists, returns error toast message
         else if (result){
             Toast.makeText(this,  taskNameString + " Already Exists!", Toast.LENGTH_SHORT).show();
         }
@@ -117,6 +124,7 @@ public class CreateTask extends AppCompatActivity {
 
 
     public boolean isDuplicateTask(String inputTaskName) {
+    //checks if the task already exists
 
         //gets a SQLite Database
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -129,6 +137,7 @@ public class CreateTask extends AppCompatActivity {
         };
 
         //which rows to return
+        //classname is the specified class the task is for
         String selection = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ?";
 
         //arguments to filter rows by
@@ -136,15 +145,15 @@ public class CreateTask extends AppCompatActivity {
 
         //querys the database using the parameters defined above
         Cursor cursor = db.query(
-                TimerContract.TimerEntry.TABLE_NAME,    // The table to query
-                projection,                             // The columns to return
-                selection,                              // The columns for the WHERE clause////
-                selectionArgs,                          // The values for the WHERE clause
-                null,                                   // Don't group the rows
-                null,                                   // Don't filter by row groups
-                null);                                  // The sort order
+                TimerContract.TimerEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null);
 
-        //Error checking
+        //Error checking the cursor
         if (cursor == null)
         {
             return false;
@@ -157,10 +166,10 @@ public class CreateTask extends AppCompatActivity {
         //moves cursor to firstrow
         cursor.moveToFirst();
 
-        //indexes specified column
+        //gets index specified taskname column
         int taskColumnIndex = cursor.getColumnIndex(TimerContract.TimerEntry.COLUMN_TASK_NAME);
 
-        //for all the rows, if the inputClassName equals a name of an existing class return false.
+        //for all the rows, if the inputTaskName equals a name of an existing task return false.
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
 
             String taskName = cursor.getString(taskColumnIndex);
