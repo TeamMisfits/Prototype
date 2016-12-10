@@ -28,13 +28,13 @@
             android:textSize="36dp"/>
 
         <Button
+            android:id="@+id/delete_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:text = "Delete Class"
             android:textAlignment="center"
             android:background="@color/colorAccent"
-            android:layout_weight="1"
-            android:onClick="deleteClass"/>
+            android:layout_weight="1" />
 
     </LinearLayout>
 

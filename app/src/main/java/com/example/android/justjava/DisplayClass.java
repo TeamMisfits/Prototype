@@ -1,12 +1,16 @@
 package com.example.android.justjava;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -19,6 +23,7 @@ public class DisplayClass extends AppCompatActivity {
 
     //Sends classname to createTask so that it knows what to set as classname
     public final static String EXTRA_MESSAGE_TWO = "com.example.androidexample";
+
     //sends taskname to displayTask so that it can associate information with that row
     public final static String EXTRA_MESSAGE_THREE = "com.example.androidexample";
 
@@ -27,10 +32,15 @@ public class DisplayClass extends AppCompatActivity {
 
     //Instantiates text view to display class name
     TextView textView;
+
+    Button button;
+
     //Instantiates string to hold classname
     String classname;
+
     //Database helper
     TaskDbHelper mDbHelper;
+
     //instantiates list view
     ListView listView;
 
@@ -45,27 +55,33 @@ public class DisplayClass extends AppCompatActivity {
 
         //finds the list where tasks will be displayed
         listView = (ListView) findViewById(R.id.list);
-        //Create a new TaskDbHelper
-        mDbHelper = new TaskDbHelper(this);
+
         //finds the text view where the class name will be displayed
         textView = (TextView) findViewById(R.id.class_title);
 
+        //finds the button
+        button = (Button) findViewById(R.id.delete_button);
+
+        //Create a new TaskDbHelper
+        mDbHelper = new TaskDbHelper(this);
+
+
         //recieves string from MainActivity and sets to variable classname
         classname = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        //sets text of the found textview to classname
+
+        //sets text of the found textview to classname which is the class title
         textView.setText(classname);
 
 
-        //onClickListener used to see if the user pressed a list item
+        //onClickListener used to see if the user pressed a list item. Takes to associated task if they do
         listView.setOnItemClickListener(
                 new AdapterView.OnItemClickListener()
                 {
                     @Override
                     public void onItemClick(AdapterView<?> arg0, View view,int position, long arg3) {
 
+                        //creates new intent for DisplayTask
                         Intent intent = new Intent(DisplayClass.this, DisplayTask.class);
-
-                        String selectedClass = listView.getItemAtPosition(position).toString();
 
                         //Finds the text that holds the task name in the listView
                         TextView textView = (TextView) view.findViewById(R.id.class_name);
@@ -76,28 +92,64 @@ public class DisplayClass extends AppCompatActivity {
                 }
         );
 
+        //Set a clickListener on that view
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                 confirmClick();
+            }
+        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
         //display all classes upon starting the activity
         displayTasks();
     }
 
-    public void deleteClass(View view){
 
-        //Calls deleteClass function from TaskDBHelper
+    public void confirmClick(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirmation");
+        builder.setMessage("Delete this Class?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteClass();
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+    public void deleteClass(){
+
+        //gets SQLite database
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
+        //Looks in COLUMN_CLASS_NAME
         String whereClause = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ?";
 
+        //looks in COLUMN_CLASS_NAME for a row with name classname
         String[] whereArgs = new String[] { classname };
 
+        //deletes the entry that meets above criteria
         db.delete(TimerContract.TimerEntry.TABLE_NAME, whereClause, whereArgs);
 
         //Outputs a toast message
         Toast.makeText(this, classname + " Deleted", Toast.LENGTH_SHORT).show();
+
         //Returns
         finish();
     }
@@ -115,9 +167,10 @@ public class DisplayClass extends AppCompatActivity {
 
     private void displayTasks() {
 
-        //class getAllClasses from TaskDBHelper
+        //gets SQLite Database
        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
+        //determines which columns to return
         String[] projection = {
                 TimerContract.TimerEntry._ID,
                 TimerContract.TimerEntry.COLUMN_CLASS_NAME,
@@ -127,16 +180,17 @@ public class DisplayClass extends AppCompatActivity {
                 TimerContract.TimerEntry.COLUMN_PREDICTED_TIME,
                 TimerContract.TimerEntry.COLUMN_ACTIVE};
 
-
+        //look in the following rows (for next action)
         String selection = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ? and "
                 + TimerContract.TimerEntry.COLUMN_TASK_NAME + " != ? and "
                 + TimerContract.TimerEntry.COLUMN_ACTIVE + " = ?";
                //+ "and " +
                 //TimerContract.TimerEntry.COLUMN_TASK_NAME + " != ?";
 
+        //check above rows to see if they have the following criteria
         String[] selectionArgs = {classname, "CLASS", "ACTIVE"};
-        // Perform a query on the pets table
 
+        //querys database using above arguments
         Cursor cursor = db.query(
                 TimerContract.TimerEntry.TABLE_NAME,   // The table to query
                 projection,            // The columns to return
@@ -156,17 +210,11 @@ public class DisplayClass extends AppCompatActivity {
             return;
         }
 
-        //cursor.moveToFirst();
-
-        //Places results in a string
-        String[] columns = new String[] {
-                TimerContract.TimerEntry.COLUMN_TASK_NAME,
-        };
+        //Which columns to look in
+        String[] columns = new String[] {TimerContract.TimerEntry.COLUMN_TASK_NAME,};
 
         //binds the data to the text view that holds the class name
-        int[] boundTo = new int[] {
-                R.id.class_name,
-        };
+        int[] boundTo = new int[] {R.id.class_name,};
 
         //displays in listView using simpleCursorAdapter
         simpleCursorAdapter = new android.widget.SimpleCursorAdapter(this,
@@ -175,6 +223,7 @@ public class DisplayClass extends AppCompatActivity {
                 columns,
                 boundTo,
                 0);
+
         listView.setAdapter(simpleCursorAdapter);
     }
 

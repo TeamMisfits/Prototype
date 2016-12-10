@@ -147,28 +147,6 @@ public class DisplayTask extends AppCompatActivity {
 
         predictedTimeView.setText(Double.toString(predictedTime) + " hours");
         //(Double.toString(seconds) + " hours"
-
-        /*
-        //Places results in a string
-        String[] columns = new String[]{
-                TimerContract.TimerEntry.COLUMN_START_TIME,
-        };
-
-        //binds the data to the text view that holds the class name
-        int[] boundTo = new int[]{
-                R.id.class_name,
-        };
-
-
-        //displays in listView using simpleCursorAdapter
-        simpleCursorAdapter = new android.widget.SimpleCursorAdapter(this,
-                R.layout.layout,
-                cursor,
-                columns,
-                boundTo,
-                0);
-        listView.setAdapter(simpleCursorAdapter);
-        */
     }
 
     public void changeStartTime(View view)
