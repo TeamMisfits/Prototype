@@ -13,6 +13,8 @@ import android.widget.Toast;
 import com.example.android.justjava.data.TaskDbHelper;
 import com.example.android.justjava.data.TimerContract;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class CreateTask extends AppCompatActivity {
 
     //defines the edit text view
@@ -53,11 +55,28 @@ public class CreateTask extends AppCompatActivity {
 
         //Initialize the info to be placed in the new class
         //classNameString already properly defined
-        taskNameString = mTaskNameEditText.getText().toString().trim();;
         startTime = 0;
         elapsedTime = 0;
-        predictedTime = Double.parseDouble(mPredictedTimeEditText.getText().toString().trim());
         active = "ACTIVE/STOPPED";
+
+        //try task name string entry
+        if (mTaskNameEditText.getText().toString().trim().equals("")) {
+            mTaskNameEditText.setError("Please Enter a Class Name");
+            return;
+        }
+        else {
+            taskNameString = mTaskNameEditText.getText().toString().trim();
+        }
+
+        //try prediction entry
+        Double tryPrediction;
+        try {
+            tryPrediction =  predictedTime = Double.parseDouble(mPredictedTimeEditText.getText().toString().trim());
+        } catch (NumberFormatException e) {
+            mPredictedTimeEditText.setError("Please Provide a Prediction");
+            return;
+        }
+
 
         // Gets the database in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -98,7 +117,6 @@ public class CreateTask extends AppCompatActivity {
 
 
     public boolean isDuplicateTask(String inputTaskName) {
-
 
         //gets a SQLite Database
         SQLiteDatabase db = mDbHelper.getReadableDatabase();

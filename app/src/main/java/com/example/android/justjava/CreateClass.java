@@ -42,7 +42,16 @@ public class CreateClass extends AppCompatActivity {
     public void saveClass(View view) {
 
         //Initialize the info to be placed in the new class
-        classNameString = mClassNameEditText.getText().toString().trim();
+
+        //try class name string entry
+        if (mClassNameEditText.getText().toString().trim().equals("")) {
+            mClassNameEditText.setError("Please Enter a Class Name");
+            return;
+        }
+        else {
+            classNameString = mClassNameEditText.getText().toString().trim();
+        }
+
         taskNameString = "CLASS";  //taskNameString as null means it is a class
         startTime = 0;
         elapsedTime = 0;
