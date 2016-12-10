@@ -77,6 +77,7 @@ public class CreateTask extends AppCompatActivity {
             return;
         }
 
+
         // Gets the database in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
