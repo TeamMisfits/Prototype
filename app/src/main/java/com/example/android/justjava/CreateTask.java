@@ -57,7 +57,7 @@ public class CreateTask extends AppCompatActivity {
         //classNameString already properly defined
         startTime = 0;
         elapsedTime = 0;
-        active = "ACTIVE";
+        active = "ACTIVE/STOPPED";
 
         //try task name string entry
         if (mTaskNameEditText.getText().toString().trim().equals("")) {

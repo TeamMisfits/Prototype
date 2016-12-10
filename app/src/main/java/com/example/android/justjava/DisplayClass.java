@@ -183,12 +183,12 @@ public class DisplayClass extends AppCompatActivity {
         //look in the following rows (for next action)
         String selection = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ? and "
                 + TimerContract.TimerEntry.COLUMN_TASK_NAME + " != ? and "
-                + TimerContract.TimerEntry.COLUMN_ACTIVE + " = ?";
+                + TimerContract.TimerEntry.COLUMN_ACTIVE + " != ?";
                //+ "and " +
                 //TimerContract.TimerEntry.COLUMN_TASK_NAME + " != ?";
 
         //check above rows to see if they have the following criteria
-        String[] selectionArgs = {classname, "CLASS", "ACTIVE"};
+        String[] selectionArgs = {classname, "CLASS", "INACTIVE"};
 
         //querys database using above arguments
         Cursor cursor = db.query(

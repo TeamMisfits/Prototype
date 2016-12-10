@@ -73,6 +73,15 @@ public class DisplayTask extends AppCompatActivity {
 
         displayData();
 
+        if (checkActive())
+        {
+            startButton.setVisibility(View.INVISIBLE);
+        }
+        else
+        {
+            stopButton.setVisibility(View.INVISIBLE);
+        }
+
         //stopButton.setVisibility(View.INVISIBLE);
     }
 
@@ -160,6 +169,7 @@ public class DisplayTask extends AppCompatActivity {
         ContentValues values = new ContentValues();
 
         values.put(TimerContract.TimerEntry.COLUMN_START_TIME, timeSeconds);
+        values.put(TimerContract.TimerEntry.COLUMN_ACTIVE, "ACTIVE/STARTED");
 
         // Which row to update, based on the title
         String selection = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ? and " +
@@ -225,6 +235,7 @@ public class DisplayTask extends AppCompatActivity {
         ContentValues values = new ContentValues();
 
         values.put(TimerContract.TimerEntry.COLUMN_ELAPSED_TIME, elapsedTime);
+        values.put(TimerContract.TimerEntry.COLUMN_ACTIVE, "ACTIVE/STOPPED");
 
         // Which row to update, based on the title
         //String newselection = TimerEntry.COLUMN_CLASS_NAME + " = ? and " +
@@ -247,6 +258,10 @@ public class DisplayTask extends AppCompatActivity {
 
     public void finishTask(View view)
     {
+        if (checkActive())
+        {
+            changeStopTime(view);
+        }
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String[] projection = {
@@ -287,4 +302,51 @@ public class DisplayTask extends AppCompatActivity {
 
         finish();
     }
+
+    public boolean checkActive() {
+
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                //TimerEntry._ID,
+                //TimerEntry.COLUMN_CLASS_NAME,
+                //TimerEntry.COLUMN_TASK_NAME,
+                //TimerContract.TimerEntry.COLUMN_START_TIME,
+                //TimerContract.TimerEntry.COLUMN_ELAPSED_TIME
+                TimerContract.TimerEntry.COLUMN_ACTIVE};
+
+        String selection = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ? and " +
+                TimerContract.TimerEntry.COLUMN_TASK_NAME + " = ?";
+
+        String[] selectionArgs = {classname, taskname};
+        // Perform a query on the pets table
+
+        Cursor cursor = db.query(
+                TimerContract.TimerEntry.TABLE_NAME,   // The table to query
+                projection,            // The columns to return
+                selection,                  // The columns for the WHERE clause////
+                selectionArgs,                  // The values for the WHERE clause
+                null,                  // Don't group the rows
+                null,                  // Don't filter by row groups
+                null);                   // The sort order
+
+        //figures out the index for the column
+        cursor.moveToFirst();
+
+        int activeColumnIndex = cursor.getColumnIndex(TimerContract.TimerEntry.COLUMN_ACTIVE);
+
+        // Use that index to extract the String or Int value of the word
+        // at the current row the cursor is on.
+        String active = cursor.getString(activeColumnIndex);
+
+        if (active.equals("ACTIVE/STARTED"))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 }
