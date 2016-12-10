@@ -120,7 +120,8 @@
             android:onClick="finishTask"
             android:textColor="@android:color/white"
             android:background="@color/colorPrimary"
-            android:elevation="0dp" />
+            android:elevation="0dp"
+            android:textAlignment="center" />
 
         <Button
             android:layout_width="match_parent"
@@ -130,7 +131,8 @@
             android:text="Delete Task"
             android:onClick="deleteTask"
             android:background="#f67d7d"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textAlignment="center" />
 
 
     </LinearLayout>
