@@ -19,6 +19,10 @@ import android.widget.Toast;
 import com.example.android.justjava.data.TaskDbHelper;
 import com.example.android.justjava.data.TimerContract;
 
+//activity to display the specific data for a certain class
+//called after clicking on a class in the list view in main activity
+//includes function to delete the class, error check deleting a task,
+// move to the create a task screen, and display all of the tasks for the class
 public class DisplayClass extends AppCompatActivity {
 
     //Sends classname to createTask so that it knows what to set as classname
@@ -33,6 +37,7 @@ public class DisplayClass extends AppCompatActivity {
     //Instantiates text view to display class name
     TextView textView;
 
+    //instantiates button for deleting class
     Button button;
 
     //Instantiates string to hold classname
@@ -59,7 +64,7 @@ public class DisplayClass extends AppCompatActivity {
         //finds the text view where the class name will be displayed
         textView = (TextView) findViewById(R.id.class_title);
 
-        //finds the button
+        //finds the delete button
         button = (Button) findViewById(R.id.delete_button);
 
         //Create a new TaskDbHelper
@@ -85,6 +90,7 @@ public class DisplayClass extends AppCompatActivity {
 
                         //Finds the text that holds the task name in the listView
                         TextView textView = (TextView) view.findViewById(R.id.class_name);
+                        //creates a string array with the task name and the class name to pass to the display task activity
                         String[] text = new String[] {textView.getText().toString(), classname};
                         intent.putExtra(EXTRA_MESSAGE_THREE, text);
                         startActivity(intent);
@@ -105,12 +111,14 @@ public class DisplayClass extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        //display all classes upon starting the activity
+        //display all tasks upon starting the activity
         displayTasks();
     }
 
 
     public void confirmClick(){
+        //error checking for the delete class button
+        //creates pop up menu to confirm that class should be deleted
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Confirmation");
         builder.setMessage("Delete this Class?");
@@ -134,6 +142,7 @@ public class DisplayClass extends AppCompatActivity {
 
 
     public void deleteClass(){
+        //function to delete a class and all of its entries from the database
 
         //gets SQLite database
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -141,21 +150,23 @@ public class DisplayClass extends AppCompatActivity {
         //Looks in COLUMN_CLASS_NAME
         String whereClause = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ?";
 
-        //looks in COLUMN_CLASS_NAME for a row with name classname
+        //looks in COLUMN_CLASS_NAME for a row with name stored in classname (the name of the current class being deleted
         String[] whereArgs = new String[] { classname };
 
-        //deletes the entry that meets above criteria
+        //deletes all the entries that meet above criteria
+        //deletes all tasks for the given class from the database
         db.delete(TimerContract.TimerEntry.TABLE_NAME, whereClause, whereArgs);
 
-        //Outputs a toast message
+        //Outputs a toast message to confirm deleting
         Toast.makeText(this, classname + " Deleted", Toast.LENGTH_SHORT).show();
 
-        //Returns
+        //Returns to main activity
         finish();
     }
 
 
     public void createTask(View view){
+        //function called by create task button to move to create task activity
 
         Intent intent = new Intent(DisplayClass.this, CreateTask.class);
 
@@ -166,6 +177,7 @@ public class DisplayClass extends AppCompatActivity {
 
 
     private void displayTasks() {
+        //function to display all of the tasks for the specified class
 
         //gets SQLite Database
        SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -181,11 +193,13 @@ public class DisplayClass extends AppCompatActivity {
                 TimerContract.TimerEntry.COLUMN_ACTIVE};
 
         //look in the following rows (for next action)
+        //looks for rows with classname equal to the specified class
+        //looks for rows with task that doesnt equal "CLASS", the keyword for the class row (not a task)
+        //looks for rows with task that is active
         String selection = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ? and "
                 + TimerContract.TimerEntry.COLUMN_TASK_NAME + " != ? and "
                 + TimerContract.TimerEntry.COLUMN_ACTIVE + " != ?";
-               //+ "and " +
-                //TimerContract.TimerEntry.COLUMN_TASK_NAME + " != ?";
+
 
         //check above rows to see if they have the following criteria
         String[] selectionArgs = {classname, "CLASS", "INACTIVE"};
