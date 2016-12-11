@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Just Java</string>
+    <string name="app_name">TimeTrack</string>
 
     <!-- Text hint for name field in the editor [CHAR LIMIT=30] -->
     <string name="hint_class_name">Class Name</string>
