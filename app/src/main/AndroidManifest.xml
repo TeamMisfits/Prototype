@@ -10,15 +10,13 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="TaskTracker">
+            android:label="TimeTrack">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Main2Activity" />
-        <activity android:name=".Main3Activity" />
         <activity
             android:name=".CreateClass"
             android:label="Create Class" />
@@ -28,9 +26,12 @@
         <activity
             android:name=".CreateTask"
             android:label="Create Task " />
-        <activity android:name=".DisplayTask" />
-        <activity android:name=".DisplayData" />
-        <activity android:name=".ClassData"></activity>
+        <activity android:name=".DisplayTask"
+            android:label="View Task" />
+        <activity android:name=".DisplayData"
+            android:label="All Data" />
+        <activity android:name=".ClassData"
+            android:label="Class Data "></activity>
     </application>
 
 </manifest>

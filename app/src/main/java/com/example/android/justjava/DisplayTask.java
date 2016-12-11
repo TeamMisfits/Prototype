@@ -1,9 +1,11 @@
 package com.example.android.justjava;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -40,6 +42,10 @@ public class DisplayTask extends AppCompatActivity {
     Button startButton;
 
     Button stopButton;
+
+    Button finishTask;
+
+    Button deleteTask;
 
     //initializes database helper
     TaskDbHelper mDbHelper;
@@ -81,6 +87,10 @@ public class DisplayTask extends AppCompatActivity {
 
         stopButton = (Button) findViewById(R.id.stopButton);
 
+        finishTask = (Button) findViewById(R.id.finish_button);
+
+        deleteTask = (Button) findViewById(R.id.delete_button);
+
         //displays the data for elapsed/predicted times
         displayData();
 
@@ -95,6 +105,22 @@ public class DisplayTask extends AppCompatActivity {
             //if task is not being timed, stop button is invisible
             stopButton.setVisibility(View.INVISIBLE);
         }
+
+        //Set a clickListener on that view
+        finishTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                confirmFinish(view);
+            }
+        });
+
+        //Set a clickListener on that view
+        deleteTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                confirmDelete(view);
+            }
+        });
 
     }
 
@@ -161,9 +187,12 @@ public class DisplayTask extends AppCompatActivity {
 
         //creates strings with the elapsed time and predicted time to be displayed
         //sets these strings as the text for the elapsed time and predicted time textViews
-        elapsedTimeView.setText(Double.toString(seconds) + " hours");
 
-        predictedTimeView.setText(Double.toString(predictedTime) + " hours");
+        String elapsedTimeTruncated = String.format("%.3f", seconds);
+        elapsedTimeView.setText((elapsedTimeTruncated) + " hours");
+
+        String predictedTimeTruncated = String.format("%.3f", predictedTime);
+        predictedTimeView.setText((predictedTimeTruncated) + " hours");
     }
 
     public void changeStartTime(View view)
@@ -394,5 +423,55 @@ public class DisplayTask extends AppCompatActivity {
             return false;
         }
     }
+
+
+    public void confirmFinish(final View view){
+        //error checking for the delete class button
+        //creates pop up menu to confirm that class should be deleted
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirmation");
+        builder.setMessage("Finish this Task?" + "\n" + "It will be hidden from Task List.");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finishTask(view);
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public void confirmDelete(final View view){
+        //error checking for the delete class button
+        //creates pop up menu to confirm that class should be deleted
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirmation");
+        builder.setMessage("Delete this Task?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteTask(view);
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 
 }

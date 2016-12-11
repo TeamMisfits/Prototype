@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,10 +25,16 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.DefaultValueFormatter;
+import com.github.mikephil.charting.formatter.LargeValueFormatter;
+import com.github.mikephil.charting.formatter.StackedValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +43,7 @@ public class DisplayData extends AppCompatActivity {
 
     public final static String EXTRA_MESSAGE = "com.example.androidexample";
 
-    private Float[] yData;
+    private String[] yData;
 
     private String[] xData;
 
@@ -81,19 +88,19 @@ public class DisplayData extends AppCompatActivity {
             public void onValueSelected(Entry e, Highlight h) {
 
                 //Retrieves information for the toast display
-                int pos1 = e.toString().indexOf("(sum): ");
-                String hours = e.toString().substring(pos1 + 7);
+                String classSubstring = h.toString().substring(14,15);
+                int pos1 = Integer.parseInt(classSubstring);
 
-                for (int i = 0; i < yData.length; i++) {
-                    if (yData[i] == Float.parseFloat(hours)) {
+                for (int i = 0; i < xData.length; i++) {
+                    if (xData[i].equals(classSubstring)) {
                         pos1 = i;
                         break;
                     }
                 }
 
-                String task = xData[pos1];
-                Toast.makeText(DisplayData.this, "Class: " + task + "\n" + "Hours: " + hours, Toast.LENGTH_SHORT).show();
-
+                String className = xData[pos1];
+                String hours = yData[pos1];
+                Toast.makeText(DisplayData.this, "Class: " + className + "\n" + "Hours: " + hours, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -123,10 +130,15 @@ public class DisplayData extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(getApplicationContext(), ClassData.class);
-                String className = xData[selection];
-                intent.putExtra(EXTRA_MESSAGE, className);
-                startActivity(intent);
+                try {
+                    Intent intent = new Intent(getApplicationContext(), ClassData.class);
+                    String className = xData[selection];
+                    intent.putExtra(EXTRA_MESSAGE, className);
+                    startActivity(intent);
+                }
+                catch (Exception ex){
+                    return;
+                }
             }
         });
 
@@ -135,52 +147,36 @@ public class DisplayData extends AppCompatActivity {
     private void addDataSet(PieChart pieChart) {
 
         ArrayList<PieEntry> yEntrys = new ArrayList<>();
-        ArrayList<String> xEntrys = new ArrayList<>();
 
         //Error check to see if there is any data
         if (xData == null || yData == null)
         {
             yEntrys.add(new PieEntry(0));
-            xEntrys.add("0");
         }
         else {
 
             for (int i = 0; i < yData.length; i++) {
-                yEntrys.add(new PieEntry(yData[i]));
+                if(Float.parseFloat(yData[i]) > 0)
+                    yEntrys.add(new PieEntry(Float.parseFloat(yData[i]), xData[i]));
+                else {
+                    //do nothing
+                }
             }
 
-            for (int i = 0; i < xData.length; i++) {
-                xEntrys.add((xData[i]));
-            }
         }
 
 
         //Create data set
         PieDataSet pieDataSet = new PieDataSet(yEntrys, "Class Hours");
-        pieDataSet.setSliceSpace(2);
-        pieDataSet.setValueTextSize(12);
+        pieDataSet.setSliceSpace(0);
+        pieDataSet.setValueTextSize(10);
+        pieDataSet.setValueFormatter(new DefaultValueFormatter(3));
 
-        //add colors
-        ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(Color.BLUE);
-        colors.add(Color.GRAY);
-        colors.add(Color.YELLOW);
-        colors.add(Color.RED);
-        colors.add(Color.CYAN);
-        colors.add(Color.MAGENTA);
-        colors.add(Color.GREEN);
-        colors.add(Color.WHITE);
-        colors.add(Color.LTGRAY);
-        colors.add(Color.DKGRAY);
-        colors.add(Color.TRANSPARENT);
 
-        pieDataSet.setColors(colors);
 
-        /*
-        Legend legend = pieChart.getLegend();
-        legend.setForm(Legend.LegendForm.CIRCLE);
-        legend.setPosition(Legend.LegendPosition.ABOVE_CHART_CENTER);
-    */
+
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+
 
         //create pie data object
         PieData pieData = new PieData(pieDataSet);
@@ -312,17 +308,17 @@ public class DisplayData extends AppCompatActivity {
 
         //look in the following rows (for next action)
         String selection = TimerContract.TimerEntry.COLUMN_CLASS_NAME + " = ? and "
-                + TimerContract.TimerEntry.COLUMN_ACTIVE + " = ?";
+                + TimerContract.TimerEntry.COLUMN_ELAPSED_TIME + " != ?";
 
         //Arraylist to hold results from query to get data
-        ArrayList<Float> yDataList = new ArrayList<>();
+        ArrayList<String> yDataList = new ArrayList<>();
 
 
         if (xData != null) {
             for (int i = 0; i < xData.length; i++) {
 
                 //check above rows to see if they have the following criteria
-                String[] selectionArgs = {xData[i], "ACTIVE"};
+                String[] selectionArgs = {xData[i], "0"};
 
                 cursor = db.query(
                         TimerContract.TimerEntry.TABLE_NAME,    // The table to query
@@ -349,11 +345,12 @@ public class DisplayData extends AppCompatActivity {
 
 
                 elapsedTime /= 3600;
-                yDataList.add(elapsedTime);
+                String elapsedTimeTruncated = String.format("%.3f", elapsedTime);
+                yDataList.add(elapsedTimeTruncated);
 
             }
 
-            yData = yDataList.toArray(new Float[yDataList.size()]);
+            yData = yDataList.toArray(new String[yDataList.size()]);
         }
     }
 
