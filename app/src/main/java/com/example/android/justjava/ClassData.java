@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,28 +18,31 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.DefaultValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class ClassData extends AppCompatActivity {
-
-    private Float[] yData;
-
+    //string[] that holds yData. elapsed time.
+    private String[] yData;
+    //string[] that holds xData. classname
     private String[] xData;
-
+    //DB helper
     TaskDbHelper mDbHelper;
-
+    //piechart object
     PieChart pieChart;
-
+    //cursor to look through DB
     Cursor cursor;
-
+    //name of class. passed from DisplayData activity
     String className;
-
+    //textview that displays classname
     TextView class_name;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,42 +51,41 @@ public class ClassData extends AppCompatActivity {
 
         final Intent intent = getIntent();
 
+        //receive classname, find text view and classname as text view
         className = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-
         class_name = (TextView) findViewById(R.id.class_name);
-
         class_name.setText(className);
 
+        //instantiate DB helper
         mDbHelper = new TaskDbHelper(this);
-
+        //finds piechart
         pieChart = (PieChart) findViewById(R.id.piechart);
-
+        //initial pie chart setup
         pieChart.setRotationEnabled(false);
         pieChart.setHoleRadius(0f);
         pieChart.setTransparentCircleAlpha(0);
 
-
+        //goes through DB and finds all task names for the specific class
         getTaskNamesData();
+        //goes through DB and gets elapsed time for each task
         getElapsedTimeData();
+        //adds the data to the pie chart
         addDataSet(pieChart);
 
-
+        //Retrieves information for the toast display upon click of pie chart
         pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
 
-                //Retrieves information for the toast display
-                int pos1 = e.toString().indexOf("(sum): ");
-                String hours = e.toString().substring(pos1 + 7);
+                //h is passed by pie chart. holds values of x and y values of selection
+                String taskSubstring = h.toString().substring(14,15);
+                //parses string to find x value of clicked class
+                int pos1 = Integer.parseInt(taskSubstring);
 
-                for (int i = 0; i < yData.length; i++) {
-                    if (yData[i] == Float.parseFloat(hours)) {
-                        pos1 = i;
-                        break;
-                    }
-                }
-
+                //uses pos1 to find the class name and elapsed time of the selected task
                 String task = xData[pos1];
+                String hours = yData[pos1];
+                //display toast to user
                 Toast.makeText(ClassData.this, "Task: " + task + "\n" + "Hours: " + hours, Toast.LENGTH_SHORT).show();
 
             }
@@ -96,51 +99,42 @@ public class ClassData extends AppCompatActivity {
 
     private void addDataSet(PieChart pieChart) {
 
-        ArrayList<PieEntry> yEntrys = new ArrayList<>();
-        ArrayList<String> xEntrys = new ArrayList<>();
+        //instantiates array of PieEntry. pie entry holds a string (task name) and float (elapsed time)
+        ArrayList<PieEntry> Entrys = new ArrayList<>();
 
         //Error check to see if there is any data
         if (xData == null || yData == null)
         {
-            yEntrys.add(new PieEntry(0));
-            xEntrys.add("0");
+            Entrys.add(new PieEntry(0));
         }
         else {
 
             for (int i = 0; i < yData.length; i++) {
-                yEntrys.add(new PieEntry(yData[i]));
-            }
-
-            for (int i = 0; i < xData.length; i++) {
-                xEntrys.add((xData[i]));
+                //dont include tasks that have no data
+                if ((Float.parseFloat(yData[i]) > 0))
+                    Entrys.add(new PieEntry(Float.parseFloat(yData[i]), xData[i]));
+                else{
+                    //do nothing
+                }
             }
         }
 
+
         //Create data set
-        PieDataSet pieDataSet = new PieDataSet(yEntrys, "Class Hours");
-        pieDataSet.setSliceSpace(2);
-        pieDataSet.setValueTextSize(12);
+        PieDataSet pieDataSet = new PieDataSet(Entrys, "Class Hours");
 
-        //add colors
-        ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(Color.BLUE);
-        colors.add(Color.GRAY);
-        colors.add(Color.YELLOW);
-        colors.add(Color.RED);
-        colors.add(Color.CYAN);
-        colors.add(Color.MAGENTA);
-        colors.add(Color.GREEN);
-        colors.add(Color.WHITE);
-        colors.add(Color.LTGRAY);
-        colors.add(Color.DKGRAY);
-        colors.add(Color.TRANSPARENT);
-
-        pieDataSet.setColors(colors);
-
+        //pie chart formatting
+        pieDataSet.setSliceSpace(0);
+        pieDataSet.setValueTextSize(10);
+        pieDataSet.setValueFormatter(new DefaultValueFormatter(3));
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
 
         //create pie data object
         PieData pieData = new PieData(pieDataSet);
+
+        //create pie chart
         pieChart.setData(pieData);
+        pieChart.setDescription("");
         pieChart.invalidate();
 
     }
@@ -218,18 +212,17 @@ public class ClassData extends AppCompatActivity {
                 TimerContract.TimerEntry.COLUMN_ACTIVE};
 
         //look in the following rows (for next action)
-        String selection = TimerContract.TimerEntry.COLUMN_TASK_NAME + " = ? and "
-                + TimerContract.TimerEntry.COLUMN_ACTIVE + " = ?";
+        String selection = TimerContract.TimerEntry.COLUMN_TASK_NAME + " = ? ";
 
         //Arraylist to hold results from query to get data
-        ArrayList<Float> yDataList = new ArrayList<>();
+        ArrayList<String> yDataList = new ArrayList<>();
 
 
         if (xData != null) {
             for (int i = 0; i < xData.length; i++) {
 
                 //check above rows to see if they have the following criteria
-                String[] selectionArgs = {xData[i], "ACTIVE"};
+                String[] selectionArgs = {xData[i]};
 
                 cursor = db.query(
                         TimerContract.TimerEntry.TABLE_NAME,    // The table to query
@@ -254,13 +247,14 @@ public class ClassData extends AppCompatActivity {
                     elapsedTime += currentElapsedTime;
                 }
 
-
+                //convert into hours and
                 elapsedTime /= 3600;
-                yDataList.add(elapsedTime);
+                String elapsedTimeTruncated = String.format("%.3f", elapsedTime);
+                yDataList.add(elapsedTimeTruncated);
 
             }
-
-            yData = yDataList.toArray(new Float[yDataList.size()]);
+            //convert arraylist into string[] for pie chart use
+            yData = yDataList.toArray(new String[yDataList.size()]);
         }
     }
 }
